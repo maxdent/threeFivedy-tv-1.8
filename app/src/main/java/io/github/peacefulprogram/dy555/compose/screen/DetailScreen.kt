@@ -4,6 +4,7 @@ import android.content.Context
 import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.focusable
@@ -486,7 +487,7 @@ fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) 
 @Composable
 fun VideoTag(tagName: String, modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
     Surface(
-        modifier = modifier,
+        modifier = modifier.clickable { onClick() },
         colors = ClickableSurfaceDefaults.colors(
             containerColor = Color.White.copy(alpha = 0.2f),
             focusedContainerColor = Color.White.copy(alpha = 0.2f),
