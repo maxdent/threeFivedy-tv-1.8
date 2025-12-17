@@ -460,7 +460,7 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
         }
 
         val requestToken by lazy {
-            MD5.create().digestHex("https://zyz.sdljwomen.com")
+            MD5.create().digestHex("https://www.5j7o1g3g9z6.shop")
         }
 
     }

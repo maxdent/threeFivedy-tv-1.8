@@ -109,7 +109,7 @@ class PlaybackViewModel(
                 if (ex is CancellationException) {
                     throw ex
                 }
-                _playbackEpisode.emit(Resource.Error("获取视频链接失败:${ex.message}", ex))
+                _playbackEpisode.emit(Resource.Error("获取视频链接失败: ${ex.javaClass.simpleName} - ${ex.message}", ex))
             }
         }
     }
