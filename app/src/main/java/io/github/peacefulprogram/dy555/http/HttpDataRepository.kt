@@ -452,7 +452,7 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
     companion object {
 
         val appKey by lazy {
-            MD5.create().digestHex("www.555dy.com")
+            MD5.create().digestHex("www.5j7o1g3g9z6.shop")
         }
 
         val clientKey by lazy {
