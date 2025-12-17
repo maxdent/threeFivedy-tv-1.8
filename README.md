@@ -1,2 +1,2 @@
-# 555dy-tv
-android tv client of 555dy
+# dy-tv
+android tv client of dy
