@@ -1,4 +1,4 @@
-﻿package io.github.peacefulprogram.dy555.compose.screen
+package io.github.peacefulprogram.dy555.compose.screen
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
@@ -400,7 +400,7 @@ fun VideoCategories(
                 }
             }
             // Ranking
-                item {
+            if (videoGroups.ranks.isNotEmpty()) {
                     var selectedRankIndex by remember {
                         mutableIntStateOf(0)
                     }
