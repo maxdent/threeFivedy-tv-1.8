@@ -34,7 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -110,9 +110,7 @@ fun HomeScreen(
     val navigateToDetail = { video: MediaCardData ->
         DetailActivity.startActivity(video.id, context)
     }
-    var selectedTabIndex by remember {
-        mutableIntStateOf(0)
-    }
+    var selectedTabIndex: Int by remember { mutableStateOf(0) }
     var showSettingsDialog by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
@@ -218,7 +216,9 @@ fun HomeScreen(
 
 }
 
-// 椤堕儴鍒嗙被瀵艰埅鏍忛€変腑tab鐨勭储寮?鐩存帴鏀惧埌缁勪欢鍙傛暟涓璕8minify浼氬け璐?// todo: 鎵惧埌鍘熷洜骞舵敼涓虹洿鎺ヤ娇鐢ㄧ粍浠跺弬鏁?private val LocalTopNavSelectedTabIndex = compositionLocalOf<Int> { error("not init") }
+// 椤堕儴鍒嗙被瀵艰埅鏍忛€変腑tab鐨勭储寮?鐩存帴鏀惧埌缁勪欢鍙傛暟涓璕8minify浼氬失璐?
+// todo: 鎵惧埌鍘熷洜骞舵敼涓虹洿鎺ヤ娇鐢ㄧ粍浠跺弬鏁?
+private val LocalTopNavSelectedTabIndex = compositionLocalOf<Int> { error("not init") }
 
 @OptIn(ExperimentalTvMaterial3Api::class, ExperimentalTvFoundationApi::class)
 @Composable
@@ -401,9 +401,7 @@ fun VideoCategories(
             }
             // Ranking
             if (videoGroups.ranks.isNotEmpty()) {
-                var selectedRankIndex by remember {
-                    mutableIntStateOf(0)
-                }
+                var selectedRankIndex: Int by remember { mutableStateOf(0) }
                 val rankNames = remember(videoGroups.ranks) {
                     videoGroups.ranks.map { it.first }
                 }

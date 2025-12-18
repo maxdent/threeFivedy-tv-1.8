@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -19,12 +20,13 @@ import androidx.compose.ui.unit.dp
 import io.github.peacefulprogram.dy555.Constants
 import io.github.peacefulprogram.dy555.util.PreferenceManager
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsDialog(
     onDismiss: () -> Unit,
     context: Context
 ) {
-    var apiServerUrl by remember {
+    var apiServerUrl: String by remember {
         mutableStateOf(PreferenceManager.getM3u8ApiServer(context))
     }
 

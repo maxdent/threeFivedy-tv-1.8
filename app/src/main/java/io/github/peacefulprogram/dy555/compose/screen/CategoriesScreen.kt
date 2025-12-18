@@ -81,7 +81,7 @@ fun CategoriesScreen(
     viewModel: CategoriesViewModel
 ) {
     val pagingItems = viewModel.pager.collectAsLazyPagingItems()
-    var showFilterDialog by remember {
+    var showFilterDialog: Boolean by remember {
         mutableStateOf(false)
     }
 
@@ -344,7 +344,7 @@ fun VideoFilterDialog(
 fun FocusableFilterChip(
     text: String, selected: Boolean, modifier: Modifier = Modifier, onClick: () -> Unit = {}
 ) {
-    var focused by remember {
+    var focused: Boolean by remember {
         mutableStateOf(false)
     }
     FilterChip(selected = selected, onClick = onClick, label = {

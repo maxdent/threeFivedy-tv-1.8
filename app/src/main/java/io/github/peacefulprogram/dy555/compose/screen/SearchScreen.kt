@@ -124,7 +124,7 @@ fun InputKeywordRow(onSearch: (String) -> Unit) {
             speechToTextParser.startListening()
         }
     }
-    var inputKeyword by remember {
+    var inputKeyword: String by remember {
         mutableStateOf("")
     }
 
@@ -220,7 +220,7 @@ fun Keyword(
     onLongClick: () -> Unit = {},
     onClick: () -> Unit = {}
 ) {
-    var focused by remember {
+    var focused: Boolean by remember {
         mutableStateOf(false)
     }
     Surface(onClick = onClick,

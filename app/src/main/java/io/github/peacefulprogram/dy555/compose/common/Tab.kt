@@ -44,7 +44,7 @@ fun CustomTabRow(
     initialFocusedIndex: Int = 0,
     onTabFocus: (Int) -> Unit = {}
 ) {
-    var anyTabFocused by remember {
+    var anyTabFocused: Boolean by remember {
         mutableStateOf(false)
     }
     FocusGroup(modifier = modifier.onFocusChanged { anyTabFocused = it.hasFocus }) {

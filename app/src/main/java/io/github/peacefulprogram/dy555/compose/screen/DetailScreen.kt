@@ -121,7 +121,7 @@ fun DetailScreen(viewModel: VideoDetailViewModel) {
     }
     val videoDetail = (videoDetailResource as Resource.Success<VideoDetailData>).data
     val context = LocalContext.current
-    var reverseEpisode by remember {
+    var reverseEpisode: Boolean by remember {
         mutableStateOf(false)
     }
 
@@ -279,7 +279,7 @@ fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) 
     val focusRequester = remember {
         FocusRequester()
     }
-    var showDescDialog by remember {
+    var showDescDialog: Boolean by remember {
         mutableStateOf(false)
     }
     val context = LocalContext.current

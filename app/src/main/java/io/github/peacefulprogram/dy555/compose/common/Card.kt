@@ -41,7 +41,7 @@ fun VideoCard(
     onVideoClick: (MediaCardData) -> Unit = {},
     onVideoKeyEvent: ((MediaCardData, KeyEvent) -> Boolean)? = null
 ) {
-    var focused by rememberSaveable {
+    var focused: Boolean by rememberSaveable {
         mutableStateOf(false)
     }
     var actualModifier = modifier
