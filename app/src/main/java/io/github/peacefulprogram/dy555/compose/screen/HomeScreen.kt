@@ -218,9 +218,7 @@ fun HomeScreen(
 
 }
 
-// 顶部分类导航栏选中tab的索引,直接放到组件参数中R8minify会失败
-// todo: 找到原因并改为直接使用组件参数
-private val LocalTopNavSelectedTabIndex = compositionLocalOf<Int> { error("not init") }
+// 顶部分类导航栏选中tab的索�?直接放到组件参数中R8minify会失�?// todo: 找到原因并改为直接使用组件参�?private val LocalTopNavSelectedTabIndex = compositionLocalOf<Int> { error("not init") }
 
 @OptIn(ExperimentalTvMaterial3Api::class, ExperimentalTvFoundationApi::class)
 @Composable
@@ -401,8 +399,7 @@ fun VideoCategories(
                     }
                 }
             }
-            // 排行榜
-            if (videoGroups.ranks.isNotEmpty()) {
+            // 排行�?            if (videoGroups.ranks.isNotEmpty()) {
                 item {
                     var selectedRankIndex by remember {
                         mutableIntStateOf(0)
@@ -553,49 +550,4 @@ fun NetflixVideos(
             }
         })
 
-}
-@Composable
-fun SettingsDialog(
-    onDismiss: () -> Unit,
-    context: android.content.Context
-) {
-    var apiServerUrl by remember {
-        mutableStateOf(PreferenceManager.getM3u8ApiServer(context))
-    }
-
-    AlertDialog(
-        onDismissRequest = onDismiss,
-        title = { androidx.compose.material3.Text("����") },
-        text = {
-            Column {
-                androidx.compose.material3.Text("M3U8������������ַ:")
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = apiServerUrl,
-                    onValueChange = { apiServerUrl = it },
-                    label = { androidx.compose.material3.Text("��������ַ") },
-                    placeholder = { androidx.compose.material3.Text("http://192.168.100.109:8000") },
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        },
-        confirmButton = {
-            TextButton(
-                onClick = {
-                    PreferenceManager.saveM3u8ApiServer(context, apiServerUrl)
-                    Constants.M3U8_EXTRACT_API_SERVER = apiServerUrl
-                    android.widget.Toast.makeText(context, "����ɹ�", android.widget.Toast.LENGTH_SHORT).show()
-                    onDismiss()
-                }
-            ) {
-                androidx.compose.material3.Text("����")
-            }
-        },
-        dismissButton = {
-            TextButton(onClick = onDismiss) {
-                androidx.compose.material3.Text("ȡ��")
-            }
-        }
-    )
 }
