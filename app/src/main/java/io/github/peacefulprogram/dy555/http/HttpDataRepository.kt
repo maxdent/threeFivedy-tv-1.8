@@ -534,7 +534,7 @@ fun queryVideoUrl(episodeId: String): String? {
         try {
             val doc = Jsoup.connect(Constants.DOMAIN_UPDATE_URL)
                 .userAgent(Constants.USER_AGENT)
-                .timeout(10000)
+                .timeout(30000)
                 .get()
             
             // 查找所有链接
