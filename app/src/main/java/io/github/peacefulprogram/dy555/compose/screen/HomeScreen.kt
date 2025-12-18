@@ -343,6 +343,10 @@ fun VideoCategories(
             }
         }
     }
+    val rankNames = remember(videoGroups.ranks) {
+        videoGroups.ranks.map { it.first }
+    }
+    var selectedRankIndex: Int by remember { mutableStateOf(0) }
     TvLazyColumn(
         content = {
             // 鎺ㄨ崘瑙嗛
@@ -401,10 +405,6 @@ fun VideoCategories(
             }
             // Ranking
             if (videoGroups.ranks.isNotEmpty()) {
-                var selectedRankIndex: Int by remember { mutableStateOf(0) }
-                val rankNames = remember(videoGroups.ranks) {
-                    videoGroups.ranks.map { it.first }
-                }
                 Column(Modifier.fillMaxWidth()) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Text(text = stringResource(R.string.video_group_rank))
