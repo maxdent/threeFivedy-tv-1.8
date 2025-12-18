@@ -88,10 +88,17 @@ class Dy555Application : Application(), ImageLoaderFactory {
     }
 
     override fun newImageLoader(): ImageLoader = ImageLoader.Builder(this).okHttpClient {
-        OkHttpClient.Builder().hostnameVerifier { _, _ -> true }.addInterceptor { chain ->
-            chain.request().newBuilder().header("user-agent", Constants.USER_AGENT)
-                .header("referer", Constants.BASE_URL).build().let { chain.proceed(it) }
-        }.sslSocketFactory(sslSocketFactory, trustManager).build()
+        OkHttpClient.Builder()
+            .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+            .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+            .hostnameVerifier { _, _ -> true }
+            .addInterceptor { chain ->
+                chain.request().newBuilder().header("user-agent", Constants.USER_AGENT)
+                    .header("referer", Constants.BASE_URL).build().let { chain.proceed(it) }
+            }
+            .sslSocketFactory(sslSocketFactory, trustManager)
+            .build()
     }.build()
 
 
@@ -125,6 +132,9 @@ class Dy555Application : Application(), ImageLoaderFactory {
     private fun httpModule() = module {
         single {
             OkHttpClient.Builder()
+                .connectTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                .writeTimeout(30, java.util.concurrent.TimeUnit.SECONDS)
                 .hostnameVerifier { _, _ -> true }
                 .addInterceptor { chain ->
                     val originalReq = chain.request()
