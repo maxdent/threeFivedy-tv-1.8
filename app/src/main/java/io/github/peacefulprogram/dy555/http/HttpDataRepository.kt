@@ -303,12 +303,19 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
         val url = episodeId.split("-").run {
             "${Constants.BASE_URL}/voddisp/id/${get(0)}/sid/${get(1)}/nid/${get(2)}.html"
         }
+        android.util.Log.d("HttpDataRepository", "queryVideoUrl - episodeId: $episodeId")
+        android.util.Log.d("HttpDataRepository", "queryVideoUrl - 请求加密URL: $url")
+        
         val encryptUrl = Request.Builder().url(url).get().build()
             .run { okHttpClient.newCall(this).execute() }.body?.string()
             ?.let { Gson().fromJson(it, Map::class.java)["url"] as String? }
             ?: throw RuntimeException("加密url为空")
+        
+        android.util.Log.d("HttpDataRepository", "queryVideoUrl - 获取到加密URL: $encryptUrl")
 
         val serverUrl = Constants.PLAY_URL_SERVER
+        android.util.Log.d("HttpDataRepository", "queryVideoUrl - 播放服务器: $serverUrl")
+        
         val timestamp = System.currentTimeMillis() / 0x3e8
         val iv = "d11324dcscfe16c0".toByteArray(Charsets.UTF_8)
         val key = "55cc5c42a943afdc".toByteArray(Charsets.UTF_8)
@@ -323,8 +330,12 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
         val requestUrl = "${Constants.PLAY_URL_SERVER}/get_play_url"
         val accessToken =
             MD5.create().digestHex(requestUrl.substring(requestUrl.indexOf("://") + 3))
+        
+        val finalRequestUrl = "$requestUrl?app_key=$appKey&client_key=$clientKey&request_token=$requestToken&access_token=$accessToken"
+        android.util.Log.d("HttpDataRepository", "queryVideoUrl - 请求播放URL: $finalRequestUrl")
+        
         return Request.Builder()
-            .url("$requestUrl?app_key=$appKey&client_key=$clientKey&request_token=$requestToken&access_token=$accessToken")
+            .url(finalRequestUrl)
             .header("X-PLAYER-TIMESTAMP", timestamp.toString())
             .header("X-PLAYER-SIGNATURE", signature)
             .header("X-PLAYER-METHOD", "GET")
@@ -336,9 +347,14 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
                     init(Cipher.DECRYPT_MODE, keySpec, IvParameterSpec(iv))
                     doFinal(it.chunked(2).map { it.toInt(0x10).toByte() }.toByteArray())
                 }.toString(Charsets.UTF_8)
-                Gson().fromJson<Map<String, Map<String, String>>>(
+                android.util.Log.d("HttpDataRepository", "queryVideoUrl - 解密后JSON: $json")
+                
+                val finalUrl = Gson().fromJson<Map<String, Map<String, String>>>(
                     json, Map::class.java
                 )["data"]?.get("url")
+                
+                android.util.Log.d("HttpDataRepository", "queryVideoUrl - 最终播放地址: $finalUrl")
+                finalUrl
             }
     }
 
