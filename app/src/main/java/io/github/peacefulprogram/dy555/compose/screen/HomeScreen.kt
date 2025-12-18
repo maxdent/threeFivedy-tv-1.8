@@ -401,35 +401,34 @@ fun VideoCategories(
             }
             // Ranking
             if (videoGroups.ranks.isNotEmpty()) {
-                    var selectedRankIndex by remember {
-                        mutableIntStateOf(0)
+                var selectedRankIndex by remember {
+                    mutableIntStateOf(0)
+                }
+                val rankNames = remember(videoGroups.ranks) {
+                    videoGroups.ranks.map { it.first }
+                }
+                Column(Modifier.fillMaxWidth()) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = stringResource(R.string.video_group_rank))
+                        Text(text = " | ")
+                        CustomTabRow(
+                            selectedTabIndex = selectedRankIndex,
+                            tabs = rankNames
+                        ) { selectedRankIndex = it }
                     }
-                    val rankNames = remember(videoGroups.ranks) {
-                        videoGroups.ranks.map { it.first }
-                    }
-                    Column(Modifier.fillMaxWidth()) {
-                        Row(verticalAlignment = Alignment.CenterVertically) {
-                            Text(text = stringResource(R.string.video_group_rank))
-                            Text(text = " | ")
-                            CustomTabRow(
-                                selectedTabIndex = selectedRankIndex,
-                                tabs = rankNames
-                            ) { selectedRankIndex = it }
+                    AnimatedContent(
+                        targetState = selectedRankIndex,
+                        contentKey = { rankNames[it] },
+                        transitionSpec = {
+                            fadeIn(animationSpec = tween(220, delayMillis = 90))
+                                .togetherWith(fadeOut(animationSpec = tween(90)))
                         }
-                        AnimatedContent(
-                            targetState = selectedRankIndex,
-                            contentKey = { rankNames[it] },
-                            transitionSpec = {
-                                fadeIn(animationSpec = tween(220, delayMillis = 90))
-                                    .togetherWith(fadeOut(animationSpec = tween(90)))
-                            }
-                        ) { rankIndex ->
-                            VideoRow(
-                                videos = videoGroups.ranks[rankIndex].second,
-                                onVideoClick = onVideoClick,
-                                onVideoKeyEvent = onVideoKeyEvent
-                            )
-                        }
+                    ) { rankIndex ->
+                        VideoRow(
+                            videos = videoGroups.ranks[rankIndex].second,
+                            onVideoClick = onVideoClick,
+                            onVideoKeyEvent = onVideoKeyEvent
+                        )
                     }
                 }
             }

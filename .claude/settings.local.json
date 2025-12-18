@@ -3,7 +3,8 @@
     "allow": [
       "Bash(od:*)",
       "Bash(tail:*)",
-      "Bash(./gradlew assembleDebug)"
+      "Bash(./gradlew assembleDebug)",
+      "Bash(kotlinc -Xskip-metadata-version-check \"e:\\\\test\\\\555dy\\\\555dy-tv-1.8\\\\555dy-tv-1.8\\\\app\\\\src\\\\main\\\\java\\\\io\\\\github\\\\peacefulprogram\\\\dy555\\\\compose\\\\screen\\\\HomeScreen.kt\" -d /tmp/test.jar 2>&1:*)"
     ]
   }
 }
