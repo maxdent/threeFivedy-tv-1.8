@@ -12,7 +12,12 @@
       "Bash(then if grep -n \"by remember {\" \"e:\\\\test\\\\555dy\\\\555dy-tv-1.8\\\\555dy-tv-1.8\\\\app\\\\src\\\\main\\\\java\\\\io\\\\github\\\\peacefulprogram\\\\dy555\\\\compose\\\\screen$file\" -A 1)",
       "Bash(then echo \" ✅ All have type annotations\" else echo \" ❌ Missing type annotations\" fi elif grep -q \"by remember {\" \"e:\\\\test\\\\555dy\\\\555dy-tv-1.8\\\\555dy-tv-1.8\\\\app\\\\src\\\\main\\\\java\\\\io\\\\github\\\\peacefulprogram\\\\dy555\\\\compose\\\\common$file\")",
       "Bash(then if grep:*)",
-      "Bash(then echo \" ✅ All have type annotations\" else echo \" ❌ Missing type annotations\" fi fi done)"
+      "Bash(then echo \" ✅ All have type annotations\" else echo \" ❌ Missing type annotations\" fi fi done)",
+      "Bash(cat:*)",
+      "Bash(if grep:*)",
+      "Bash(then:*)",
+      "Bash(else)",
+      "Bash(fi:*)"
     ]
   }
 }

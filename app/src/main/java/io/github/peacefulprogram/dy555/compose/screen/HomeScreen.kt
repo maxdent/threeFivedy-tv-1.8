@@ -216,8 +216,9 @@ fun HomeScreen(
 
 }
 
-// 椤堕儴鍒嗙被瀵艰埅鏍忛€変腑tab鐨勭储寮?鐩存帴鏀惧埌缁勪欢鍙傛暟涓璕8minify浼氬失璐?
-// todo: 鎵惧埌鍘熷洜骞舵敼涓虹洿鎺ヤ娇鐢ㄧ粍浠跺弬鏁?
+// Top navigation selected tab index composition local
+// Note: This is passed directly as component parameter to avoid loss during minification
+// TODO: Find root cause and change to use component parameter directly
 private val LocalTopNavSelectedTabIndex = compositionLocalOf<Int> { error("not init") }
 
 @OptIn(ExperimentalTvMaterial3Api::class, ExperimentalTvFoundationApi::class)
@@ -349,7 +350,7 @@ fun VideoCategories(
     var selectedRankIndex: Int by remember { mutableStateOf(0) }
     TvLazyColumn(
         content = {
-            // 鎺ㄨ崘瑙嗛
+            // Recommended videos
             if (videoGroups.recommendVideos.isNotEmpty()) {
                 item {
                     Column(Modifier.fillMaxWidth()) {
@@ -357,7 +358,7 @@ fun VideoCategories(
                             Text(text = stringResource(R.string.video_group_recommend))
                         } else {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(text = "鎺ㄨ崘")
+                                Text(text = "推荐")
                                 Text(text = " | ")
                                 Surface(
                                     onClick = {
@@ -405,32 +406,34 @@ fun VideoCategories(
             }
             // Ranking
             if (videoGroups.ranks.isNotEmpty()) {
-                Column(Modifier.fillMaxWidth()) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(text = stringResource(R.string.video_group_rank))
-                        Text(text = " | ")
-                        CustomTabRow(
-                            selectedTabIndex = selectedRankIndex,
-                            tabs = rankNames
-                        ) { selectedRankIndex = it }
-                    }
-                    AnimatedContent(
-                        targetState = selectedRankIndex,
-                        contentKey = { rankNames[it] },
-                        transitionSpec = {
-                            fadeIn(animationSpec = tween(220, delayMillis = 90))
-                                .togetherWith(fadeOut(animationSpec = tween(90)))
+                item {
+                    Column(Modifier.fillMaxWidth()) {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(text = stringResource(R.string.video_group_rank))
+                            Text(text = " | ")
+                            CustomTabRow(
+                                selectedTabIndex = selectedRankIndex,
+                                tabs = rankNames
+                            ) { selectedRankIndex = it }
                         }
-                    ) { rankIndex ->
-                        VideoRow(
-                            videos = videoGroups.ranks[rankIndex].second,
-                            onVideoClick = onVideoClick,
-                            onVideoKeyEvent = onVideoKeyEvent
-                        )
+                        AnimatedContent(
+                            targetState = selectedRankIndex,
+                            contentKey = { rankNames[it] },
+                            transitionSpec = {
+                                fadeIn(animationSpec = tween(220, delayMillis = 90))
+                                    .togetherWith(fadeOut(animationSpec = tween(90)))
+                            }
+                        ) { rankIndex ->
+                            VideoRow(
+                                videos = videoGroups.ranks[rankIndex].second,
+                                onVideoClick = onVideoClick,
+                                onVideoKeyEvent = onVideoKeyEvent
+                            )
+                        }
                     }
                 }
             }
-            // 鍏朵粬
+            // Others
             items(videoGroups.videoGroups, key = { it.first }) { group ->
                 Column(Modifier.fillMaxWidth()) {
                     Text(text = group.first)
