@@ -10,6 +10,8 @@ import okhttp3.Cookie
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.internal.and
 import okhttp3.internal.toHexString
 import org.jsoup.Jsoup
