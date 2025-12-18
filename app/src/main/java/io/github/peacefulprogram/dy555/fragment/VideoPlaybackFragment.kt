@@ -57,9 +57,11 @@ class VideoPlaybackFragment(
                 viewModel.playbackEpisode.collectLatest { playbackEpisode ->
                     when (playbackEpisode) {
                         Resource.Loading -> {
-                            // 换集时暂停
+                            // 换集时暂停并显示加载提示
                             exoplayer?.pause()
                             progressBarManager.show()
+                            // 显示"正在获取视频链接"提示
+                            glue?.subtitle = "正在获取视频链接..."
                         }
 
                         is Resource.Success -> {
@@ -136,7 +138,8 @@ class VideoPlaybackFragment(
             ExoPlayer.Builder(requireContext()).setMediaSourceFactory(mediaSourceFactory).build()
                 .apply {
                     prepareGlue(this)
-                    playWhenReady = true
+                    // Don't auto-play until video URL is loaded
+                    playWhenReady = false
                     addListener(object : Player.Listener {
                         override fun onPlaybackStateChanged(playbackState: Int) {
                             if (playbackState == ExoPlayer.STATE_ENDED) {
