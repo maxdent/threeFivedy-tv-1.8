@@ -298,8 +298,71 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
             pageContainer.child(pageContainer.childrenSize() - 1).attr("href") ?: return false
         return !lastPageHref.endsWith("/$currentPage.html")
     }
+fun queryVideoUrl(episodeId: String): String? {       
+        // 构建视频页面URL
+        val videoPageUrl = "${Constants.BASE_URL}/vodplay/$episodeId.html"
 
-    fun queryVideoUrl(episodeId: String): String? {
+        android.util.Log.d("HttpDataRepository", "queryVideoUrl - episodeId: $episodeId")
+        android.util.Log.d("HttpDataRepository", "queryVideoUrl - 视频页面URL: $videoPageUrl")
+        
+        try {
+            // 调用外部API提取m3u8链接
+            val apiUrl = "http://192.168.100.109:8000/extract"
+            val requestBody = """{"url": "$videoPageUrl"}"""
+            
+            android.util.Log.d("HttpDataRepository", "queryVideoUrl - 调用API: $apiUrl")
+            android.util.Log.d("HttpDataRepository", "queryVideoUrl - 请求体: $requestBody")
+            
+            val mediaType = okhttp3.MediaType.parse("application/json; charset=utf-8")
+            val body = okhttp3.RequestBody.create(mediaType, requestBody)
+            
+            val request = Request.Builder()
+                .url(apiUrl)
+                .post(body)
+                .build()
+            
+            val response = okHttpClient.newCall(request).execute()
+            val responseBody = response.body?.string()
+            
+            android.util.Log.d("HttpDataRepository", "queryVideoUrl - API响应: $responseBody")
+            
+            if (!response.isSuccessful) {
+                throw RuntimeException("API请求失败: ${response.code}")
+            }
+            
+            // 解析响应JSON
+            val jsonResponse = Gson().fromJson(responseBody, Map::class.java)
+            val success = jsonResponse["success"] as? Boolean ?: false
+            
+            if (!success) {
+                val message = jsonResponse["message"] as? String ?: "未知错误"
+                throw RuntimeException("API返回失败: $message")
+            }
+            
+            // 提取m3u8_urls数组
+            val m3u8Urls = jsonResponse["m3u8_urls"] as? List<*>
+            
+            if (m3u8Urls.isNullOrEmpty()) {
+                throw RuntimeException("未找到m3u8链接")
+            }
+            
+            // 获取第二个URL（如果存在），否则使用第一个
+            val finalUrl = if (m3u8Urls.size >= 2) {
+                m3u8Urls[1] as String
+            } else {
+                m3u8Urls[0] as String
+            }
+            
+            android.util.Log.d("HttpDataRepository", "queryVideoUrl - 最终播放地址: $finalUrl")
+            
+            return finalUrl
+            
+        } catch (e: Exception) {
+            android.util.Log.e("HttpDataRepository", "queryVideoUrl - 错误: ${e.message}", e)
+            throw RuntimeException("获取视频链接失败: ${e.message}", e)
+        }
+    }
+    fun queryVideoUrl_old(episodeId: String): String? {
         val url = episodeId.split("-").run {
             "${Constants.BASE_URL}/voddisp/id/${get(0)}/sid/${get(1)}/nid/${get(2)}.html"
         }
