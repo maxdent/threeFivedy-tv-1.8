@@ -307,14 +307,14 @@ fun queryVideoUrl(episodeId: String): String? {
         
         try {
             // 调用外部API提取m3u8链接
-            val apiUrl = "http://192.168.100.109:8000/extract"
+            val apiUrl = "${Constants.M3U8_EXTRACT_API_SERVER}/extract"
             val requestBody = """{"url": "$videoPageUrl"}"""
             
             android.util.Log.d("HttpDataRepository", "queryVideoUrl - 调用API: $apiUrl")
             android.util.Log.d("HttpDataRepository", "queryVideoUrl - 请求体: $requestBody")
             
-            val mediaType = okhttp3.MediaType.parse("application/json; charset=utf-8")
-            val body = okhttp3.RequestBody.create(mediaType, requestBody)
+            val mediaType = "application/json; charset=utf-8".toMediaTypeOrNull()
+            val body = requestBody.toRequestBody(mediaType)
             
             val request = Request.Builder()
                 .url(apiUrl)

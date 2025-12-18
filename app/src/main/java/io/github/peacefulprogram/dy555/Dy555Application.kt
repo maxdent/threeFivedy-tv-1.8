@@ -48,6 +48,8 @@ class Dy555Application : Application(), ImageLoaderFactory {
 
     override fun onCreate() {
         context = this
+        // Load saved M3U8 API server address
+        Constants.M3U8_EXTRACT_API_SERVER = io.github.peacefulprogram.dy555.util.PreferenceManager.getM3u8ApiServer(this)
         startKoin {
             androidContext(this@Dy555Application)
             androidLogger()

@@ -23,6 +23,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
@@ -80,6 +84,8 @@ import io.github.peacefulprogram.dy555.compose.common.ErrorTip
 import io.github.peacefulprogram.dy555.compose.common.Loading
 import io.github.peacefulprogram.dy555.compose.common.VideoCard
 import io.github.peacefulprogram.dy555.compose.util.FocusGroup
+import io.github.peacefulprogram.dy555.Constants
+import io.github.peacefulprogram.dy555.util.PreferenceManager
 import io.github.peacefulprogram.dy555.http.MediaCardData
 import io.github.peacefulprogram.dy555.http.Resource
 import io.github.peacefulprogram.dy555.http.VideosOfType
@@ -107,6 +113,7 @@ fun HomeScreen(
     var selectedTabIndex by remember {
         mutableIntStateOf(0)
     }
+    var showSettingsDialog by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
 
@@ -133,7 +140,8 @@ fun HomeScreen(
             HomeTopNav(
                 onTabFocus = { selectedTabIndex = it },
                 tabItems = TabItems,
-                navTabFocusRequester = tabFocusRequester
+                navTabFocusRequester = tabFocusRequester,
+                onSettingsClick = { showSettingsDialog = true }
             )
         }
 
@@ -194,6 +202,13 @@ fun HomeScreen(
         }
     }
 
+    if (showSettingsDialog) {
+        SettingsDialog(
+            onDismiss = { showSettingsDialog = false },
+            context = context
+        )
+    }
+
     LaunchedEffect(Unit) {
         if (!hasInitTabFocus) {
             hasInitTabFocus = true
@@ -215,7 +230,8 @@ fun HomeTopNav(
     tabItems: Array<HomeNavTabItem>,
     navTabFocusRequester: FocusRequester = remember {
         FocusRequester()
-    }
+    },
+    onSettingsClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val tabNames = remember {
@@ -241,6 +257,14 @@ fun HomeTopNav(
                     ) {
                         Icon(
                             imageVector = Icons.Default.History, contentDescription = "history"
+                        )
+                    }
+                    IconButton(
+                        onClick = onSettingsClick,
+                        modifier = Modifier.restorableFocus()
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Settings, contentDescription = "settings"
                         )
                     }
 
@@ -529,4 +553,49 @@ fun NetflixVideos(
             }
         })
 
+}
+@Composable
+fun SettingsDialog(
+    onDismiss: () -> Unit,
+    context: android.content.Context
+) {
+    var apiServerUrl by remember {
+        mutableStateOf(PreferenceManager.getM3u8ApiServer(context))
+    }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = { androidx.compose.material3.Text("设置") },
+        text = {
+            Column {
+                androidx.compose.material3.Text("M3U8解析服务器地址:")
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = apiServerUrl,
+                    onValueChange = { apiServerUrl = it },
+                    label = { androidx.compose.material3.Text("服务器地址") },
+                    placeholder = { androidx.compose.material3.Text("http://192.168.100.109:8000") },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    PreferenceManager.saveM3u8ApiServer(context, apiServerUrl)
+                    Constants.M3U8_EXTRACT_API_SERVER = apiServerUrl
+                    android.widget.Toast.makeText(context, "保存成功", android.widget.Toast.LENGTH_SHORT).show()
+                    onDismiss()
+                }
+            ) {
+                androidx.compose.material3.Text("保存")
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                androidx.compose.material3.Text("取消")
+            }
+        }
+    )
 }
