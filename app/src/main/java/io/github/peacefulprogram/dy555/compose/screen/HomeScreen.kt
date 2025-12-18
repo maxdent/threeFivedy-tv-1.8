@@ -1,4 +1,4 @@
-package io.github.peacefulprogram.dy555.compose.screen
+﻿package io.github.peacefulprogram.dy555.compose.screen
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedContent
@@ -218,7 +218,7 @@ fun HomeScreen(
 
 }
 
-// 顶部分类导航栏选中tab的索�?直接放到组件参数中R8minify会失�?// todo: 找到原因并改为直接使用组件参�?private val LocalTopNavSelectedTabIndex = compositionLocalOf<Int> { error("not init") }
+// 椤堕儴鍒嗙被瀵艰埅鏍忛€変腑tab鐨勭储寮?鐩存帴鏀惧埌缁勪欢鍙傛暟涓璕8minify浼氬け璐?// todo: 鎵惧埌鍘熷洜骞舵敼涓虹洿鎺ヤ娇鐢ㄧ粍浠跺弬鏁?private val LocalTopNavSelectedTabIndex = compositionLocalOf<Int> { error("not init") }
 
 @OptIn(ExperimentalTvMaterial3Api::class, ExperimentalTvFoundationApi::class)
 @Composable
@@ -345,7 +345,7 @@ fun VideoCategories(
     }
     TvLazyColumn(
         content = {
-            // 推荐视频
+            // 鎺ㄨ崘瑙嗛
             if (videoGroups.recommendVideos.isNotEmpty()) {
                 item {
                     Column(Modifier.fillMaxWidth()) {
@@ -353,7 +353,7 @@ fun VideoCategories(
                             Text(text = stringResource(R.string.video_group_recommend))
                         } else {
                             Row(verticalAlignment = Alignment.CenterVertically) {
-                                Text(text = "推荐")
+                                Text(text = "鎺ㄨ崘")
                                 Text(text = " | ")
                                 Surface(
                                     onClick = {
@@ -399,7 +399,7 @@ fun VideoCategories(
                     }
                 }
             }
-            // 排行�?            if (videoGroups.ranks.isNotEmpty()) {
+            // Ranking
                 item {
                     var selectedRankIndex by remember {
                         mutableIntStateOf(0)
@@ -433,7 +433,7 @@ fun VideoCategories(
                     }
                 }
             }
-            // 其他
+            // 鍏朵粬
             items(videoGroups.videoGroups, key = { it.first }) { group ->
                 Column(Modifier.fillMaxWidth()) {
                     Text(text = group.first)
@@ -501,7 +501,7 @@ fun NetflixVideos(
     }
     if (pagingItems.loadState.refresh is LoadState.Error) {
         val error = (pagingItems.loadState.refresh as LoadState.Error).error
-        ErrorTip(message = "加载失败:${error.message}") {
+        ErrorTip(message = "鍔犺浇澶辫触:${error.message}") {
             pagingItems.retry()
         }
         return
