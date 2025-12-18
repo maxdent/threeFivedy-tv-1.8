@@ -449,19 +449,52 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
         }
     }
 
+    fun updateBaseUrl() {
+        try {
+            val doc = Jsoup.connect(Constants.DOMAIN_UPDATE_URL)
+                .userAgent(Constants.USER_AGENT)
+                .timeout(5000)
+                .get()
+            
+            // 查找所有链接
+            val links = doc.select("a")
+            for (link in links) {
+                val text = link.text()
+                // 查找包含"主用"的链接
+                if (text.contains("主用")) {
+                    var newUrl = link.attr("href")
+                    if (newUrl.isNotEmpty()) {
+                        // 确保以/结尾，因为原代码风格似乎偏向保留
+                        if (!newUrl.endsWith("/")) {
+                            newUrl += "/"
+                        }
+                        Constants.BASE_URL = newUrl
+                        break
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            // 如果获取失败，保持默认值或抛出异常
+        }
+    }
+
     companion object {
 
-        val appKey by lazy {
-            MD5.create().digestHex("www.5j7o1g3g9z6.shop")
-        }
+        val appKey: String
+            get() = MD5.create().digestHex(
+                Constants.BASE_URL
+                    .replace("https://", "")
+                    .replace("http://", "")
+                    .removeSuffix("/")
+            )
 
         val clientKey by lazy {
             MD5.create().digestHex(Constants.USER_AGENT)
         }
 
-        val requestToken by lazy {
-            MD5.create().digestHex("https://www.5j7o1g3g9z6.shop")
-        }
+        val requestToken: String
+            get() = MD5.create().digestHex(Constants.BASE_URL.removeSuffix("/"))
 
     }
 }
