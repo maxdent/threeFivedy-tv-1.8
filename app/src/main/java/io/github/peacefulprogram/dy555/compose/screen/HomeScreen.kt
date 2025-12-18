@@ -111,7 +111,7 @@ fun HomeScreen(
         DetailActivity.startActivity(video.id, context)
     }
     var selectedTabIndex: Int by remember { mutableStateOf(0) }
-    var showSettingsDialog by remember { mutableStateOf(false) }
+    var showSettingsDialog: Boolean by remember { mutableStateOf(false) }
 
     val coroutineScope = rememberCoroutineScope()
 
