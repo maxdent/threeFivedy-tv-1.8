@@ -531,13 +531,6 @@ fun VideoTag(
                     }
                 ),
                 shape = MaterialTheme.shapes.small
-            ),
-            selectedBorder = Border(
-                border = BorderStroke(
-                    width = 2.dp,
-                    color = MaterialTheme.colorScheme.primary
-                ),
-                shape = MaterialTheme.shapes.small
             )
         ),
         scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f),
