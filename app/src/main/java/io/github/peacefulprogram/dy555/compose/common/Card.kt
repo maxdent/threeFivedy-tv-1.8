@@ -59,23 +59,19 @@ fun VideoCard(
             onVideoKeyEvent(video, it)
         }
     }
-    Surface(
+    androidx.tv.material3.Surface(
         modifier = actualModifier.focusable(),
         onClick = { onVideoClick(video) },
         shape = CardDefaults.shape(),
         colors = CardDefaults.colors(),
         scale = CardDefaults.scale(focusedScale = focusedScale),
         border = CardDefaults.border(
-            focusedBorder = if (isSelected || focused) {
-                Border(
-                    border = BorderStroke(
-                        width = 5.dp,
-                        color = if (isSelected) Color.Green else MaterialTheme.colorScheme.primary
-                    )
+            focusedBorder = Border(
+                border = BorderStroke(
+                    width = 5.dp,
+                    color = if (isSelected) Color.Green else MaterialTheme.colorScheme.primary
                 )
-            } else {
-                null
-            }
+            )
         )
     ) {
         Column {
