@@ -48,20 +48,14 @@ fun VideoCard(
     var focused: Boolean by rememberSaveable {
         mutableStateOf(false)
     }
-    var actualModifier = modifier
-        .size(width = width, height = height)
-        .onFocusChanged {
-            focused = it.isFocused || it.hasFocus
-        }
-        .clickable { onVideoClick(video) }
-    if (onVideoKeyEvent != null) {
-        actualModifier = actualModifier.onPreviewKeyEvent {
-            onVideoKeyEvent(video, it)
-        }
-    }
 
     CompactCard(
-        modifier = actualModifier,
+        modifier = Modifier
+            .size(width = width, height = height)
+            .onFocusChanged {
+                focused = it.isFocused || it.hasFocus
+            }
+            .focusable(),
         onClick = { onVideoClick(video) },
         onLongClick = { onVideoLongClick(video) },
         image = {
