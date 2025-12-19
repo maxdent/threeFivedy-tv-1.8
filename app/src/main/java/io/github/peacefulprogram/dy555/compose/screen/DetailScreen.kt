@@ -10,7 +10,6 @@ import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.gestures.animateScrollBy
 import androidx.compose.foundation.layout.Arrangement.spacedBy
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -38,7 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.Key
 import androidx.compose.ui.input.key.KeyEventType
@@ -350,7 +348,7 @@ fun VideoInfoRow(
             if (playHistory is Resource.Success) {
                 val his = playHistory.data
                 var isContinueButtonSelected by remember {
-                    mutableStateOf(false)
+                    mutableStateOf(true)  // 默认选中继续播放按钮
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -582,60 +580,43 @@ fun VideoTag(
     isSelected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
-    var focused: Boolean by remember {
-        mutableStateOf(false)
-    }
-    Box(
-        modifier = modifier
-            .onFocusChanged {
-                focused = it.isFocused || it.hasFocus
-            }
-            .focusable()
-            .clickable { onClick() }
-    ) {
-        Surface(
-            colors = ClickableSurfaceDefaults.colors(
-                containerColor = if (isSelected) {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                } else {
-                    Color.White.copy(alpha = 0.2f)
-                },
-                focusedContainerColor = if (isSelected) {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
-                } else {
-                    MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
-                },
-                pressedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
-            ),
-            shape = ClickableSurfaceDefaults.shape(shape = MaterialTheme.shapes.small),
-            border = ClickableSurfaceDefaults.border(
-                focusedBorder = Border(
-                    border = BorderStroke(
-                        width = 3.dp,
-                        color = when {
-                            isSelected -> Color.Green
-                            focused -> Color(0xFF00AAFF)  // 鲜蓝色边框
-                            else -> Color.Transparent
-                        }
-                    ),
-                    shape = MaterialTheme.shapes.small
-                )
-            ),
-            scale = ClickableSurfaceDefaults.scale(focusedScale = 1.1f),
-            onClick = onClick
-        ) {
-            Text(
-                modifier = Modifier.padding(6.dp, 3.dp),
-                text = tagName,
-                color = if (isSelected) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    Color.White
-                }
+    Surface(
+        onClick = onClick,
+        colors = ClickableSurfaceDefaults.colors(
+            containerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            } else {
+                Color.White.copy(alpha = 0.2f)
+            },
+            focusedContainerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+            } else {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            },
+            pressedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
+        ),
+        shape = ClickableSurfaceDefaults.shape(shape = MaterialTheme.shapes.small),
+        border = ClickableSurfaceDefaults.border(
+            focusedBorder = Border(
+                border = BorderStroke(
+                    width = 3.dp,
+                    color = if (isSelected) Color.Green else Color(0xFF00AAFF)  // 选中绿色，焦点蓝色
+                ),
+                shape = MaterialTheme.shapes.small
             )
-        }
+        ),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.1f)
+    ) {
+        Text(
+            modifier = Modifier.padding(6.dp, 3.dp),
+            text = tagName,
+            color = if (isSelected) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                Color.White
+            }
+        )
     }
-
 }
 
 @Preview
