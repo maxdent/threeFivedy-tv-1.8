@@ -203,7 +203,7 @@ fun DetailScreen(viewModel: VideoDetailViewModel) {
             item {
                 RelativeVideoRow(videoDetail.relatedVideos)
             }
-        }, verticalArrangement = spacedBy(10.dp)
+        }, verticalArrangement = spacedBy(20.dp)
     )
 }
 
@@ -258,7 +258,7 @@ fun PlayListRow(
                             onEpisodeClick(ep)
                         }
                     }
-                }, horizontalArrangement = spacedBy(5.dp)
+                }, horizontalArrangement = spacedBy(12.dp)
             )
         }
     }
@@ -324,7 +324,7 @@ fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) 
                 .padding(horizontal = 10.dp)
                 .weight(1f)
                 .fillMaxHeight(),
-            verticalArrangement = spacedBy(10.dp),
+            verticalArrangement = spacedBy(15.dp),
         ) {
             Text(
                 text = videoDetail.title,
@@ -335,10 +335,74 @@ fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) 
             val playHistory = viewModel.latestProgress.collectAsState().value
             if (playHistory is Resource.Success) {
                 val his = playHistory.data
-                Text(
-                    text = "上次播放到${his.name} ${(his.progress / 1000).secondsToDuration()}/${(his.duration / 1000).secondsToDuration()}",
-                    style = MaterialTheme.typography.bodyMedium
-                )
+                var isContinueButtonSelected by remember {
+                    mutableStateOf(false)
+                }
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Surface(
+                        onClick = {
+                            isContinueButtonSelected = !isContinueButtonSelected
+                            // 找到对应的集数并开始播放
+                            val episode = videoDetail.playLists.flatMap { it.second }
+                                .find { it.name == his.name }
+                            if (episode != null) {
+                                selectedEpisode = episode
+                                viewModel.saveVideoHistory(
+                                    VideoHistory(
+                                        id = videoDetail.id,
+                                        pic = videoDetail.pic,
+                                        title = videoDetail.title,
+                                        epId = episode.id
+                                    )
+                                )
+                                PlaybackActivity.startActivity(
+                                    videoId = videoDetail.id,
+                                    episode = episode,
+                                    videoName = videoDetail.title,
+                                    context = context,
+                                    playlist = videoDetail.playLists.find { it.second.contains(episode) }?.second
+                                        ?: videoDetail.playLists[0].second
+                                )
+                            }
+                        },
+                        colors = ClickableSurfaceDefaults.colors(
+                            containerColor = if (isContinueButtonSelected) {
+                                MaterialTheme.colorScheme.error
+                            } else {
+                                MaterialTheme.colorScheme.primary
+                            },
+                            focusedContainerColor = if (isContinueButtonSelected) {
+                                MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
+                            } else {
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                            }
+                        ),
+                        border = ClickableSurfaceDefaults.border(
+                            focusedBorder = Border(
+                                border = BorderStroke(
+                                    width = 2.dp,
+                                    color = MaterialTheme.colorScheme.border
+                                ),
+                                shape = MaterialTheme.shapes.small
+                            )
+                        ),
+                        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f)
+                    ) {
+                        Text(
+                            text = "继续播放",
+                            color = Color.White,
+                            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                            style = MaterialTheme.typography.bodyMedium
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Text(
+                        text = "上次播放到${his.name} ${(his.progress / 1000).secondsToDuration()}/${(his.duration / 1000).secondsToDuration()}",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
             }
 
             ProvideTextStyle(value = MaterialTheme.typography.bodySmall) {
@@ -357,7 +421,7 @@ fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) 
                                             }
                                         }
                                     },
-                                    horizontalArrangement = spacedBy(5.dp),
+                                    horizontalArrangement = spacedBy(12.dp),
                                     pivotOffsets = PivotOffsets(parentFraction = 0.5f)
                                 )
                             }
@@ -383,7 +447,7 @@ fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) 
                                                 }
                                             }
                                         },
-                                        horizontalArrangement = spacedBy(10.dp)
+                                        horizontalArrangement = spacedBy(15.dp)
                                     )
                                 }
                             }
@@ -417,7 +481,7 @@ fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) 
                             }
                         }
                     },
-                    verticalArrangement = spacedBy(10.dp)
+                    verticalArrangement = spacedBy(20.dp)
                 )
 
             }

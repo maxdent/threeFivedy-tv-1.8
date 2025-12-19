@@ -39,7 +39,7 @@ fun VideoCard(
     height: Dp,
     video: MediaCardData,
     modifier: Modifier = Modifier,
-    focusedScale: Float = 1.15f,
+    focusedScale: Float = 1.2f,
     onVideoLongClick: (MediaCardData) -> Unit = {},
     onVideoClick: (MediaCardData) -> Unit = {},
     onVideoKeyEvent: ((MediaCardData, KeyEvent) -> Boolean)? = null
@@ -105,7 +105,7 @@ fun VideoCard(
         border = CardDefaults.border(
             focusedBorder = Border(
                 border = BorderStroke(
-                    width = 3.dp,
+                    width = 5.dp,
                     color = MaterialTheme.colorScheme.primary
                 )
             )

@@ -288,7 +288,7 @@ fun VideoFilterDialog(
                                     }
                                 },
                                 modifier = Modifier.weight(1f),
-                                horizontalArrangement = spacedBy(8.dp),
+                                horizontalArrangement = spacedBy(15.dp),
                                 state = rowState
                             )
                         }
@@ -325,7 +325,7 @@ fun VideoFilterDialog(
                     }
 
                 }
-            }, verticalArrangement = spacedBy(8.dp), modifier = Modifier.onPreviewKeyEvent {
+            }, verticalArrangement = spacedBy(15.dp), modifier = Modifier.onPreviewKeyEvent {
                 if (it.key == Key.Back && it.type == KeyEventType.KeyUp) {
                     closeDialog()
                     true

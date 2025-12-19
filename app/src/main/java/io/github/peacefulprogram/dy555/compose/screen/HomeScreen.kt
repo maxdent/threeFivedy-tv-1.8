@@ -440,7 +440,7 @@ fun VideoCategories(
             }
         },
         state = state,
-        verticalArrangement = spacedBy(15.dp)
+        verticalArrangement = spacedBy(30.dp)
     )
 }
 
@@ -457,25 +457,28 @@ fun VideoRow(
     Column(Modifier.fillMaxWidth()) {
         Spacer(modifier = Modifier.height(scaleHeight))
         FocusGroup {
-            TvLazyRow(content = {
-                item {
-                    Spacer(modifier = Modifier.width(scaleWidth))
-                }
-                items(items = videos, key = { it.id }) { video ->
-                    VideoCard(
-                        width = VideoCardWidth,
-                        height = VideoCardHeight,
-                        video = video,
-                        modifier = Modifier.restorableFocus(),
-                        focusedScale = focusedScale,
-                        onVideoClick = onVideoClick,
-                        onVideoKeyEvent = onVideoKeyEvent
-                    )
-                }
-                item {
-                    Spacer(modifier = Modifier.width(scaleWidth))
-                }
-            })
+            TvLazyRow(
+                content = {
+                    item {
+                        Spacer(modifier = Modifier.width(scaleWidth))
+                    }
+                    items(items = videos, key = { it.id }) { video ->
+                        VideoCard(
+                            width = VideoCardWidth,
+                            height = VideoCardHeight,
+                            video = video,
+                            modifier = Modifier.restorableFocus(),
+                            focusedScale = focusedScale,
+                            onVideoClick = onVideoClick,
+                            onVideoKeyEvent = onVideoKeyEvent
+                        )
+                    }
+                    item {
+                        Spacer(modifier = Modifier.width(scaleWidth))
+                    }
+                },
+                horizontalArrangement = spacedBy(15.dp)
+            )
         }
         Spacer(modifier = Modifier.height(scaleHeight))
     }
