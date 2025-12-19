@@ -173,7 +173,7 @@ fun DetailScreen(viewModel: VideoDetailViewModel) {
                                 border = ClickableSurfaceDefaults.border(
                                     focusedBorder = Border(
                                         BorderStroke(
-                                            5.dp, MaterialTheme.colorScheme.border
+                                            3.dp, MaterialTheme.colorScheme.border
                                         )
                                     )
                                 ),
@@ -394,7 +394,7 @@ fun VideoInfoRow(
                         border = ClickableSurfaceDefaults.border(
                             focusedBorder = Border(
                                 border = BorderStroke(
-                                    width = 5.dp,
+                                    width = 3.dp,
                                     color = MaterialTheme.colorScheme.border
                                 ),
                                 shape = MaterialTheme.shapes.small
@@ -474,7 +474,7 @@ fun VideoInfoRow(
                                 border = ClickableSurfaceDefaults.border(
                                     focusedBorder = Border(
                                         BorderStroke(
-                                            5.dp,
+                                            3.dp,
                                             MaterialTheme.colorScheme.border
                                         )
                                     )
@@ -599,12 +599,10 @@ fun VideoTag(
         border = ClickableSurfaceDefaults.border(
             focusedBorder = Border(
                 border = BorderStroke(
-                    width = 5.dp,
+                    width = 3.dp,
                     color = if (isSelected) {
                         Color.Green
                     } else {
-                        // 检查是否有焦点状态
-                        // 由于Surface本身有焦点管理，这里使用primaryColor表示焦点状态
                         MaterialTheme.colorScheme.primary
                     }
                 ),

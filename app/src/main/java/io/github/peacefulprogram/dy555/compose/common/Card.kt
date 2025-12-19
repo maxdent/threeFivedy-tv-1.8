@@ -96,11 +96,11 @@ fun VideoCard(
                 )
             }
         },
-        scale = CardDefaults.scale(focusedScale = if (focused || isSelected) 1.25f else focusedScale),
+        scale = CardDefaults.scale(focusedScale = if (focused) 1.25f else 1.22f),
         border = CardDefaults.border(
             focusedBorder = Border(
                 border = BorderStroke(
-                    width = 8.dp,
+                    width = 3.dp,
                     color = when {
                         isSelected -> Color(0xFFFF0000)  // 鲜红色边框
                         focused -> Color(0xFF00AAFF)   // 鲜蓝色边框
