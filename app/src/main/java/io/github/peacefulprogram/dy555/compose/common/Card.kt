@@ -105,23 +105,16 @@ fun VideoCard(
         },
         scale = CardDefaults.scale(focusedScale = focusedScale),
         border = CardDefaults.border(
-            focusedBorder = if (isSelected) {
-                Border(
-                    border = BorderStroke(
-                        width = 5.dp,
-                        color = Color.Green
-                    )
+            focusedBorder = Border(
+                border = BorderStroke(
+                    width = 5.dp,
+                    color = when {
+                        isSelected -> Color.Green
+                        focused -> MaterialTheme.colorScheme.primary
+                        else -> Color.Transparent
+                    }
                 )
-            } else if (focused) {
-                Border(
-                    border = BorderStroke(
-                        width = 5.dp,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                )
-            } else {
-                null
-            }
+            )
         )
     )
 }
