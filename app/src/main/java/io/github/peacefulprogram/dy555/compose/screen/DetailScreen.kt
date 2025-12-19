@@ -603,6 +603,8 @@ fun VideoTag(
                     color = if (isSelected) {
                         Color.Green
                     } else {
+                        // 检查是否有焦点状态
+                        // 由于Surface本身有焦点管理，这里使用primaryColor表示焦点状态
                         MaterialTheme.colorScheme.primary
                     }
                 ),

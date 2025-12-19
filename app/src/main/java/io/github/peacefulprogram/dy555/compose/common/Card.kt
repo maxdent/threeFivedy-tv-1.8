@@ -107,10 +107,10 @@ fun VideoCard(
             focusedBorder = Border(
                 border = BorderStroke(
                     width = 5.dp,
-                    color = if (isSelected) {
-                        Color.Green
-                    } else {
-                        MaterialTheme.colorScheme.primary
+                    color = when {
+                        isSelected -> Color.Green
+                        focused -> MaterialTheme.colorScheme.primary
+                        else -> Color.Transparent
                     }
                 )
             )
