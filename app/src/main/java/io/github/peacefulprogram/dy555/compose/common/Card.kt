@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.CardDefaults
+import androidx.tv.material3.CompactCard
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
-import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import io.github.peacefulprogram.dy555.http.MediaCardData
@@ -59,59 +59,69 @@ fun VideoCard(
             onVideoKeyEvent(video, it)
         }
     }
-    androidx.tv.material3.Surface(
-        modifier = actualModifier.focusable(),
+
+    CompactCard(
+        modifier = actualModifier,
         onClick = { onVideoClick(video) },
-        shape = CardDefaults.shape(),
-        colors = CardDefaults.colors(),
-        scale = CardDefaults.scale(focusedScale = focusedScale),
-        border = CardDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(
-                    width = 5.dp,
-                    color = if (isSelected) Color.Green else MaterialTheme.colorScheme.primary
-                )
-            )
-        )
-    ) {
-        Column {
+        onLongClick = { onVideoLongClick(video) },
+        image = {
             AsyncImage(
                 model = video.pic,
                 contentDescription = video.title,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.size(width, height)
+                modifier = Modifier.fillMaxSize()
             )
-            if (height > 150.dp) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-                ) {
-                    Text(
-                        text = video.title,
-                        maxLines = 1,
-                        modifier = Modifier.run {
-                            if (focused) {
-                                basicMarquee()
-                            } else {
-                                this
-                            }
+        },
+        title = {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+            ) {
+                Text(
+                    text = video.title,
+                    maxLines = 1,
+                    modifier = Modifier.run {
+                        if (focused) {
+                            basicMarquee()
+                        } else {
+                            this
                         }
-                    )
-                    Text(
-                        text = video.note ?: "",
-                        style = MaterialTheme.typography.titleSmall,
-                        maxLines = 1,
-                        modifier = Modifier.run {
-                            if (focused) {
-                                basicMarquee()
-                            } else {
-                                this
-                            }
+                    }
+                )
+                Text(
+                    text = video.note ?: "",
+                    style = MaterialTheme.typography.titleSmall,
+                    maxLines = 1,
+                    modifier = Modifier.run {
+                        if (focused) {
+                            basicMarquee()
+                        } else {
+                            this
                         }
-                    )
-                }
+                    }
+                )
             }
-        }
-    }
+        },
+        scale = CardDefaults.scale(focusedScale = focusedScale),
+        border = CardDefaults.border(
+            focusedBorder = if (isSelected) {
+                Border(
+                    border = BorderStroke(
+                        width = 5.dp,
+                        color = Color.Green
+                    )
+                )
+            } else if (focused) {
+                Border(
+                    border = BorderStroke(
+                        width = 5.dp,
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                )
+            } else {
+                null
+            }
+        )
+    )
 }
