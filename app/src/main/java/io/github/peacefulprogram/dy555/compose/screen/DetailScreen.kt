@@ -589,6 +589,7 @@ fun VideoTag(
             .onFocusChanged {
                 focused = it.isFocused || it.hasFocus
             }
+            .focusable()
             .clickable { onClick() }
     ) {
         Surface(
