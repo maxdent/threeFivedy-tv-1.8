@@ -173,7 +173,7 @@ fun DetailScreen(viewModel: VideoDetailViewModel) {
                                 border = ClickableSurfaceDefaults.border(
                                     focusedBorder = Border(
                                         BorderStroke(
-                                            2.dp, MaterialTheme.colorScheme.border
+                                            5.dp, MaterialTheme.colorScheme.border
                                         )
                                     )
                                 ),
@@ -394,13 +394,13 @@ fun VideoInfoRow(
                         border = ClickableSurfaceDefaults.border(
                             focusedBorder = Border(
                                 border = BorderStroke(
-                                    width = 2.dp,
+                                    width = 5.dp,
                                     color = MaterialTheme.colorScheme.border
                                 ),
                                 shape = MaterialTheme.shapes.small
                             )
                         ),
-                        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f)
+                        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.1f)
                     ) {
                         Text(
                             text = "继续播放",
@@ -474,7 +474,7 @@ fun VideoInfoRow(
                                 border = ClickableSurfaceDefaults.border(
                                     focusedBorder = Border(
                                         BorderStroke(
-                                            2.dp,
+                                            5.dp,
                                             MaterialTheme.colorScheme.border
                                         )
                                     )
@@ -599,17 +599,17 @@ fun VideoTag(
         border = ClickableSurfaceDefaults.border(
             focusedBorder = Border(
                 border = BorderStroke(
-                    width = 2.dp,
+                    width = 5.dp,
                     color = if (isSelected) {
-                        MaterialTheme.colorScheme.primary
+                        Color.Green
                     } else {
-                        MaterialTheme.colorScheme.border
+                        MaterialTheme.colorScheme.primary
                     }
                 ),
                 shape = MaterialTheme.shapes.small
             )
         ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.1f),
         onClick = onClick
     ) {
         Text(
