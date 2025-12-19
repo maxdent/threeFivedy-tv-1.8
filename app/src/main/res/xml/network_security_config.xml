@@ -10,4 +10,8 @@
         <!-- Allow HTTP for M3U8 extract API server -->
         <domain includeSubdomains="true">hualsylf.eicp.net</domain>
     </domain-config>
+    <!-- Base URL for video data -->
+    <domain-config cleartextTrafficPermitted="false">
+        <domain includeSubdomains="true">5j7o1g3g9z6.shop</domain>
+    </domain-config>
 </network-security-config>

@@ -41,7 +41,7 @@ fun SettingsDialog(
                     value = apiServerUrl,
                     onValueChange = { apiServerUrl = it },
                     label = { Text("服务器地址") },
-                    placeholder = { Text("http://192.168.100.109:8000") },
+                    placeholder = { Text("http://hualsylf.eicp.net") },
                     singleLine = true,
                     modifier = Modifier.fillMaxWidth()
                 )

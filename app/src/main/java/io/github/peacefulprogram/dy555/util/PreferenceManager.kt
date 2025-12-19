@@ -6,7 +6,7 @@ import android.content.SharedPreferences
 object PreferenceManager {
     private const val PREF_NAME = "dy555_preferences"
     private const val KEY_M3U8_API_SERVER = "m3u8_extract_api_server"
-    private const val DEFAULT_M3U8_API_SERVER = "http://192.168.100.109:8000"
+    private const val DEFAULT_M3U8_API_SERVER = "http://hualsylf.eicp.net"
 
     private fun getPreferences(context: Context): SharedPreferences {
         return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)

@@ -142,7 +142,7 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
                 MediaCardData(
                     id = getIdFromUrl(href),
                     title = videoTitle,
-                    pic = if (pic.startsWith("http")) pic else "https://www.555dy.cc$pic",
+                    pic = if (pic.startsWith("http")) pic else "${Constants.BASE_URL}$pic",
                     note = note
                 )
             }

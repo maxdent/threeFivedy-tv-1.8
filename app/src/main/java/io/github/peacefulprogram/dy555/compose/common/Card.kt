@@ -24,9 +24,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.tv.material3.Border
 import androidx.tv.material3.CardDefaults
-import androidx.tv.material3.CompactCard
 import androidx.tv.material3.ExperimentalTvMaterial3Api
 import androidx.tv.material3.MaterialTheme
+import androidx.tv.material3.Surface
 import androidx.tv.material3.Text
 import coil.compose.AsyncImage
 import io.github.peacefulprogram.dy555.http.MediaCardData
@@ -59,61 +59,63 @@ fun VideoCard(
             onVideoKeyEvent(video, it)
         }
     }
-    CompactCard(
-        modifier = actualModifier,
+    Surface(
+        modifier = actualModifier.focusable(),
         onClick = { onVideoClick(video) },
-        onLongClick = { onVideoLongClick(video) },
-        image = {
+        shape = CardDefaults.shape(),
+        colors = CardDefaults.colors(),
+        scale = CardDefaults.scale(focusedScale = focusedScale),
+        border = CardDefaults.border(
+            focusedBorder = if (isSelected || focused) {
+                Border(
+                    border = BorderStroke(
+                        width = 5.dp,
+                        color = if (isSelected) Color.Green else MaterialTheme.colorScheme.primary
+                    )
+                )
+            } else {
+                null
+            }
+        )
+    ) {
+        Column {
             AsyncImage(
                 model = video.pic,
                 contentDescription = video.title,
                 contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier.size(width, height)
             )
-        },
-        title = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
-            ) {
-                Text(
-                    text = video.title,
-                    maxLines = 1,
-                    modifier = Modifier.run {
-                        if (focused) {
-                            basicMarquee()
-                        } else {
-                            this
+            if (height > 150.dp) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 10.dp, end = 10.dp, bottom = 10.dp)
+                ) {
+                    Text(
+                        text = video.title,
+                        maxLines = 1,
+                        modifier = Modifier.run {
+                            if (focused) {
+                                basicMarquee()
+                            } else {
+                                this
+                            }
                         }
-                    }
-                )
-                Text(
-                    text = video.note ?: "",
-                    style = MaterialTheme.typography.titleSmall,
-                    maxLines = 1,
-                    modifier = Modifier.run {
-                        if (focused) {
-                            basicMarquee()
-                        } else {
-                            this
+                    )
+                    Text(
+                        text = video.note ?: "",
+                        style = MaterialTheme.typography.titleSmall,
+                        maxLines = 1,
+                        modifier = Modifier.run {
+                            if (focused) {
+                                basicMarquee()
+                            } else {
+                                this
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
-        },
-        scale = CardDefaults.scale(focusedScale = focusedScale),
-        border = CardDefaults.border(
-            focusedBorder = Border(
-                border = BorderStroke(
-                    width = 5.dp,
-                    color = when {
-                        isSelected -> Color.Green
-                        focused -> MaterialTheme.colorScheme.primary
-                        else -> Color.Transparent
-                    }
-                )
-            )
-        )
-    )
+        }
+    }
 }
