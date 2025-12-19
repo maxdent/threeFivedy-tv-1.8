@@ -304,6 +304,9 @@ fun VideoInfoRow(
     val focusRequester = remember {
         FocusRequester()
     }
+    val continueButtonFocusRequester = remember {
+        FocusRequester()
+    }
     var showDescDialog: Boolean by remember {
         mutableStateOf(false)
     }
@@ -379,6 +382,7 @@ fun VideoInfoRow(
                                 )
                             }
                         },
+                        modifier = Modifier.focusRequester(continueButtonFocusRequester),
                         colors = ClickableSurfaceDefaults.colors(
                             containerColor = if (isContinueButtonSelected) {
                                 Color(0xFFFF4444)  // 鲜红色
@@ -501,6 +505,17 @@ fun VideoInfoRow(
         }
     }
 
+    // 根据是否有播放历史设置焦点
+    LaunchedEffect(playHistory) {
+        if (playHistory is Resource.Success) {
+            // 有播放历史时，焦点在继续播放按钮
+            continueButtonFocusRequester.requestFocus()
+        } else {
+            // 没有播放历史时，焦点在左侧图片
+            focusRequester.requestFocus()
+        }
+    }
+
     // 在Dialog中显示视频简介
     AnimatedVisibility(visible = showDescDialog) {
         val scrollState = rememberScrollState()
@@ -565,9 +580,6 @@ fun VideoInfoRow(
 
         )
 
-    }
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
     }
 
 }
