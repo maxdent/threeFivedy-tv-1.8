@@ -1,5 +1,6 @@
 package io.github.peacefulprogram.dy555.compose.common
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
@@ -15,11 +16,13 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.tv.material3.Border
 import androidx.tv.material3.CardDefaults
 import androidx.tv.material3.CompactCard
 import androidx.tv.material3.ExperimentalTvMaterial3Api
@@ -36,7 +39,7 @@ fun VideoCard(
     height: Dp,
     video: MediaCardData,
     modifier: Modifier = Modifier,
-    focusedScale: Float = 1.1f,
+    focusedScale: Float = 1.15f,
     onVideoLongClick: (MediaCardData) -> Unit = {},
     onVideoClick: (MediaCardData) -> Unit = {},
     onVideoKeyEvent: ((MediaCardData, KeyEvent) -> Boolean)? = null
@@ -98,6 +101,14 @@ fun VideoCard(
                 )
             }
         },
-        scale = CardDefaults.scale(focusedScale = focusedScale)
+        scale = CardDefaults.scale(focusedScale = focusedScale),
+        border = CardDefaults.border(
+            focusedBorder = Border(
+                border = BorderStroke(
+                    width = 3.dp,
+                    color = MaterialTheme.colorScheme.primary
+                )
+            )
+        )
     )
 }

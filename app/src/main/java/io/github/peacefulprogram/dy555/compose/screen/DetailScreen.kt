@@ -124,6 +124,9 @@ fun DetailScreen(viewModel: VideoDetailViewModel) {
     var reverseEpisode: Boolean by remember {
         mutableStateOf(false)
     }
+    var selectedEpisode: Episode? by remember {
+        mutableStateOf<Episode?>(null)
+    }
 
     val playlists = remember(reverseEpisode) {
         if (reverseEpisode) {
@@ -140,14 +143,18 @@ fun DetailScreen(viewModel: VideoDetailViewModel) {
             items(count = playlists.size, key = { playlists[it].first }) { playlistIndex ->
                 val playlist = playlists[playlistIndex]
                 val listState = rememberTvLazyListState()
-                PlayListRow(episodes = playlist.second, listState = listState, title = {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Text(
-                            text = playlist.first, style = MaterialTheme.typography.titleMedium
-                        )
-                        if (playlistIndex == 0) {
-                            Text(text = " | ")
-                            Surface(
+                PlayListRow(
+                    episodes = playlist.second,
+                    selectedEpisode = selectedEpisode,
+                    listState = listState,
+                    title = {
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = playlist.first, style = MaterialTheme.typography.titleMedium
+                            )
+                            if (playlistIndex == 0) {
+                                Text(text = " | ")
+                                Surface(
                                 onClick = {
                                     reverseEpisode = !reverseEpisode
                                 },
@@ -172,7 +179,10 @@ fun DetailScreen(viewModel: VideoDetailViewModel) {
                             }
                         }
                     }
-                }) {
+                }) { episode ->
+                    // Update selected episode state for highlighting
+                    selectedEpisode = episode
+
                     viewModel.saveVideoHistory(
                         VideoHistory(
                             id = videoDetail.id, pic = videoDetail.pic, title = videoDetail.title
@@ -180,7 +190,7 @@ fun DetailScreen(viewModel: VideoDetailViewModel) {
                     )
                     PlaybackActivity.startActivity(
                         videoId = videoDetail.id,
-                        episode = it,
+                        episode = episode,
                         videoName = videoDetail.title,
                         context = context,
                         playlist = videoDetail.playLists[playlistIndex].second // 从原始数据中取未被排序的
@@ -229,6 +239,7 @@ fun RelativeVideoRow(videos: List<MediaCardData>) {
 fun PlayListRow(
     episodes: List<Episode>,
     title: @Composable () -> Unit,
+    selectedEpisode: Episode? = null,
     listState: TvLazyListState = rememberTvLazyListState(),
     onEpisodeClick: (Episode) -> Unit
 ) {
@@ -240,7 +251,9 @@ fun PlayListRow(
                 state = listState, content = {
                     items(items = episodes, key = { it.id }) { ep ->
                         VideoTag(
-                            modifier = Modifier.restorableFocus(), tagName = ep.name
+                            modifier = Modifier.restorableFocus(),
+                            tagName = ep.name,
+                            isSelected = selectedEpisode?.id == ep.id
                         ) {
                             onEpisodeClick(ep)
                         }
@@ -485,31 +498,59 @@ fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) 
 
 @OptIn(ExperimentalTvMaterial3Api::class)
 @Composable
-fun VideoTag(tagName: String, modifier: Modifier = Modifier, onClick: () -> Unit = {}) {
+fun VideoTag(
+    tagName: String,
+    modifier: Modifier = Modifier,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {}
+) {
     Surface(
         modifier = modifier.clickable { onClick() },
         colors = ClickableSurfaceDefaults.colors(
-            containerColor = Color.White.copy(alpha = 0.2f),
-            focusedContainerColor = Color.White.copy(alpha = 0.2f),
-            pressedContainerColor = Color.White.copy(alpha = 0.2f)
+            containerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            } else {
+                Color.White.copy(alpha = 0.2f)
+            },
+            focusedContainerColor = if (isSelected) {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
+            } else {
+                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+            },
+            pressedContainerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)
         ),
         shape = ClickableSurfaceDefaults.shape(shape = MaterialTheme.shapes.small),
         border = ClickableSurfaceDefaults.border(
             focusedBorder = Border(
                 border = BorderStroke(
                     width = 2.dp,
-                    color = MaterialTheme.colorScheme.border
+                    color = if (isSelected) {
+                        MaterialTheme.colorScheme.primary
+                    } else {
+                        MaterialTheme.colorScheme.border
+                    }
+                ),
+                shape = MaterialTheme.shapes.small
+            ),
+            selectedBorder = Border(
+                border = BorderStroke(
+                    width = 2.dp,
+                    color = MaterialTheme.colorScheme.primary
                 ),
                 shape = MaterialTheme.shapes.small
             )
         ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1f),
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f),
         onClick = onClick
     ) {
         Text(
             modifier = Modifier.padding(6.dp, 3.dp),
             text = tagName,
-            color = Color.White
+            color = if (isSelected) {
+                MaterialTheme.colorScheme.primary
+            } else {
+                Color.White
+            }
         )
     }
 
