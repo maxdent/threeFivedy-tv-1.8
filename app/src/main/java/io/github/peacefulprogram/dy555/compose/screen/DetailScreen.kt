@@ -381,14 +381,14 @@ fun VideoInfoRow(
                         },
                         colors = ClickableSurfaceDefaults.colors(
                             containerColor = if (isContinueButtonSelected) {
-                                MaterialTheme.colorScheme.error
+                                Color(0xFFFF4444)  // 鲜红色
                             } else {
-                                MaterialTheme.colorScheme.primary
+                                Color(0xFF2196F3)  // 鲜蓝色
                             },
                             focusedContainerColor = if (isContinueButtonSelected) {
-                                MaterialTheme.colorScheme.error.copy(alpha = 0.8f)
+                                Color(0xFFFF6666)  // 更亮的红色
                             } else {
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.8f)
+                                Color(0xFF42A5F5)  // 更亮的蓝色
                             }
                         ),
                         border = ClickableSurfaceDefaults.border(
@@ -580,8 +580,15 @@ fun VideoTag(
     isSelected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
+    var focused: Boolean by remember {
+        mutableStateOf(false)
+    }
     Surface(
-        modifier = modifier.clickable { onClick() },
+        modifier = modifier
+            .onFocusChanged {
+                focused = it.isFocused || it.hasFocus
+            }
+            .clickable { onClick() },
         colors = ClickableSurfaceDefaults.colors(
             containerColor = if (isSelected) {
                 MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
@@ -600,10 +607,10 @@ fun VideoTag(
             focusedBorder = Border(
                 border = BorderStroke(
                     width = 3.dp,
-                    color = if (isSelected) {
-                        Color.Green
-                    } else {
-                        MaterialTheme.colorScheme.primary
+                    color = when {
+                        isSelected -> Color.Green
+                        focused -> Color(0xFF00AAFF)  // 鲜蓝色边框
+                        else -> Color.Transparent
                     }
                 ),
                 shape = MaterialTheme.shapes.small

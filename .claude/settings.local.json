@@ -18,7 +18,13 @@
       "Bash(then:*)",
       "Bash(else)",
       "Bash(fi:*)",
-      "Bash(./gradlew:*)"
+      "Bash(./gradlew:*)",
+      "Bash(java -version:*)",
+      "Bash(update-alternatives:*)",
+      "Bash(where:*)",
+      "Bash(dir:*)",
+      "Bash(export:*)",
+      "Bash(D:/Devlop/java/jdk-11.0.16.1/bin/java:*)"
     ]
   }
 }
