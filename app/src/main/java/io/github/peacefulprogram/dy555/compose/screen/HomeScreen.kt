@@ -316,6 +316,9 @@ fun VideoCategories(
     val state = rememberTvLazyListState()
     val coroutineScope = rememberCoroutineScope()
     val context = LocalContext.current
+    var selectedVideoId: String? by remember {
+        mutableStateOf(null)
+    }
     val onVideoKeyEvent = { _: MediaCardData, keyEvent: KeyEvent ->
         when (keyEvent.key) {
             Key.Back -> {
@@ -391,7 +394,11 @@ fun VideoCategories(
                         }
                         VideoRow(
                             videos = videoGroups.recommendVideos,
-                            onVideoClick = onVideoClick,
+                            selectedVideoId = selectedVideoId,
+                            onVideoClick = {
+                                selectedVideoId = it.id
+                                onVideoClick(it)
+                            },
                             onVideoKeyEvent = onVideoKeyEvent
                         )
                     }
@@ -419,7 +426,11 @@ fun VideoCategories(
                         ) { rankIndex ->
                             VideoRow(
                                 videos = videoGroups.ranks[rankIndex].second,
-                                onVideoClick = onVideoClick,
+                                selectedVideoId = selectedVideoId,
+                                onVideoClick = {
+                                    selectedVideoId = it.id
+                                    onVideoClick(it)
+                                },
                                 onVideoKeyEvent = onVideoKeyEvent
                             )
                         }
@@ -432,7 +443,11 @@ fun VideoCategories(
                     Text(text = group.first)
                     VideoRow(
                         videos = group.second,
-                        onVideoClick = onVideoClick,
+                        selectedVideoId = selectedVideoId,
+                        onVideoClick = {
+                            selectedVideoId = it.id
+                            onVideoClick(it)
+                        },
                         onVideoKeyEvent = onVideoKeyEvent
                     )
                 }
@@ -448,6 +463,7 @@ fun VideoCategories(
 @Composable
 fun VideoRow(
     videos: List<MediaCardData>,
+    selectedVideoId: String? = null,
     onVideoClick: (MediaCardData) -> Unit = {},
     onVideoKeyEvent: ((MediaCardData, KeyEvent) -> Boolean)? = null
 ) {
@@ -469,6 +485,7 @@ fun VideoRow(
                             video = video,
                             modifier = Modifier.restorableFocus(),
                             focusedScale = focusedScale,
+                            isSelected = video.id == selectedVideoId,
                             onVideoClick = onVideoClick,
                             onVideoKeyEvent = onVideoKeyEvent
                         )
@@ -491,6 +508,9 @@ fun NetflixVideos(
     onVideoClick: (MediaCardData) -> Unit
 ) {
     val pagingItems = viewModel.netflixPager.collectAsLazyPagingItems()
+    var selectedVideoId: String? by remember {
+        mutableStateOf(null)
+    }
     if (pagingItems.loadState.refresh is LoadState.Loading) {
         Loading()
         return
@@ -519,7 +539,11 @@ fun NetflixVideos(
                     VideoCard(width = VideoCardWidth,
                         height = VideoCardHeight,
                         video = pagingItems[it]!!,
-                        onVideoClick = onVideoClick,
+                        isSelected = pagingItems[it]!!.id == selectedVideoId,
+                        onVideoClick = {
+                            selectedVideoId = it.id
+                            onVideoClick(it)
+                        },
                         onVideoKeyEvent = { _, event ->
                             when (event.key) {
                                 Key.Back -> {

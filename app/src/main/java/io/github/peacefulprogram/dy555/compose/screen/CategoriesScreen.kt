@@ -84,6 +84,9 @@ fun CategoriesScreen(
     var showFilterDialog: Boolean by remember {
         mutableStateOf(false)
     }
+    var selectedVideoId: String? by remember {
+        mutableStateOf(null)
+    }
 
     val state = rememberTvLazyGridState()
     val context = LocalContext.current
@@ -161,7 +164,9 @@ fun CategoriesScreen(
                         VideoCard(width = Constants.VideoCardWidth,
                             height = Constants.VideoCardHeight,
                             video = video,
+                            isSelected = video.id == selectedVideoId,
                             onVideoClick = {
+                                selectedVideoId = it.id
                                 DetailActivity.startActivity(it.id, context)
                             },
                             onVideoLongClick = {

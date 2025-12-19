@@ -40,6 +40,7 @@ fun VideoCard(
     video: MediaCardData,
     modifier: Modifier = Modifier,
     focusedScale: Float = 1.2f,
+    isSelected: Boolean = false,
     onVideoLongClick: (MediaCardData) -> Unit = {},
     onVideoClick: (MediaCardData) -> Unit = {},
     onVideoKeyEvent: ((MediaCardData, KeyEvent) -> Boolean)? = null
@@ -106,7 +107,11 @@ fun VideoCard(
             focusedBorder = Border(
                 border = BorderStroke(
                     width = 5.dp,
-                    color = MaterialTheme.colorScheme.primary
+                    color = if (isSelected) {
+                        Color.Green
+                    } else {
+                        MaterialTheme.colorScheme.primary
+                    }
                 )
             )
         )
