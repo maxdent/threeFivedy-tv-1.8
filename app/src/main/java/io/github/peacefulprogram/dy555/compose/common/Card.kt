@@ -54,8 +54,7 @@ fun VideoCard(
             .size(width = width, height = height)
             .onFocusChanged {
                 focused = it.isFocused || it.hasFocus
-            }
-            .focusable(),
+            },
         onClick = { onVideoClick(video) },
         onLongClick = { onVideoLongClick(video) },
         image = {
