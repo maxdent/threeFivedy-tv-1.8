@@ -101,7 +101,9 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
             document.selectFirst(".main .content .sm-swiper .swiper-wrapper")?.children()!!
         val wideRecommends = swiperPanels.map { panel ->
             val title = panel.selectFirst(".title")!!.text().trim()
-            val pic = panel.selectFirst("img")!!.attr("src")
+            val picElement = panel.selectFirst("img")
+            val pic = picElement?.dataset()?.get("original") ?: picElement?.attr("src") ?: ""
+            val finalPic = if (pic.startsWith("http")) pic else "${Constants.BASE_URL}$pic"
             val id = panel.selectFirst("a")!!.attr("href").let {
                 it.substring(it.lastIndexOf('/') + 1, it.lastIndexOf("."))
             }
@@ -109,7 +111,7 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
             MediaCardData(
                 id = id,
                 title = title,
-                pic = pic,
+                pic = finalPic,
                 note = note
             )
         }
@@ -280,13 +282,15 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
 
     private fun parseVideoLinkElement(element: Element): MediaCardData {
         val id = getIdFromUrl(element.attr("href"))
-        val pic = element.selectFirst("img")!!.dataset()["original"]!!
+        val picElement = element.selectFirst("img")
+        val pic = picElement?.dataset()?.get("original") ?: picElement?.attr("src") ?: ""
+        val finalPic = if (pic.startsWith("http")) pic else "${Constants.BASE_URL}$pic"
         val title = element.getElementsByClass("module-poster-item-title")[0]!!.text().trim()
         val note = element.getElementsByClass("module-item-note").firstOrNull()?.text()?.trim()
         return MediaCardData(
             id = id,
             title = title,
-            pic = pic,
+            pic = finalPic,
             note = note
         )
     }
@@ -511,10 +515,13 @@ fun queryVideoUrl(episodeId: String): String? {
             val id = card.selectFirst("a")!!.attr("href").run {
                 substring(lastIndexOf('/') + 1, lastIndexOf('.'))
             }
+            val picElement = card.selectFirst("img")
+            val pic = picElement?.dataset()?.get("original") ?: picElement?.attr("src") ?: ""
+            val finalPic = if (pic.startsWith("http")) pic else "${Constants.BASE_URL}$pic"
             MediaCardData(
                 id = id,
                 title = card.selectFirst(".module-card-item-title")!!.text().trim(),
-                pic = card.selectFirst("img")!!.dataset()["original"]!!,
+                pic = finalPic,
                 note = card.selectFirst(".module-item-note")?.text()?.trim(),
             )
         }
