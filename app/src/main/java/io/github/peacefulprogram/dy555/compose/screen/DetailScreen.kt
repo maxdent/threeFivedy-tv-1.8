@@ -348,7 +348,8 @@ fun VideoInfoRow(
                 modifier = Modifier.basicMarquee()
             )
             val playHistory = viewModel.latestProgress.collectAsState().value
-            if (playHistory is Resource.Success) {
+            val hasPlayHistory = playHistory is Resource.Success
+            if (hasPlayHistory) {
                 val his = playHistory.data
                 var isContinueButtonSelected by remember {
                     mutableStateOf(true)  // 默认选中继续播放按钮
@@ -500,19 +501,18 @@ fun VideoInfoRow(
                     verticalArrangement = spacedBy(20.dp)
                 )
 
+                // 根据是否有播放历史设置焦点
+                LaunchedEffect(hasPlayHistory) {
+                    if (hasPlayHistory) {
+                        // 有播放历史时，焦点在继续播放按钮
+                        continueButtonFocusRequester.requestFocus()
+                    } else {
+                        // 没有播放历史时，焦点在左侧图片
+                        focusRequester.requestFocus()
+                    }
+                }
             }
 
-        }
-    }
-
-    // 根据是否有播放历史设置焦点
-    LaunchedEffect(playHistory) {
-        if (playHistory is Resource.Success) {
-            // 有播放历史时，焦点在继续播放按钮
-            continueButtonFocusRequester.requestFocus()
-        } else {
-            // 没有播放历史时，焦点在左侧图片
-            focusRequester.requestFocus()
         }
     }
 
