@@ -17,7 +17,8 @@
       "Bash(if grep:*)",
       "Bash(then:*)",
       "Bash(else)",
-      "Bash(fi:*)"
+      "Bash(fi:*)",
+      "Bash(./gradlew:*)"
     ]
   }
 }

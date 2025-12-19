@@ -138,7 +138,14 @@ fun DetailScreen(viewModel: VideoDetailViewModel) {
     TvLazyColumn(
         modifier = Modifier.fillMaxSize(), content = {
             item {
-                VideoInfoRow(videoDetail = videoDetail, viewModel = viewModel)
+                VideoInfoRow(
+                    videoDetail = videoDetail,
+                    viewModel = viewModel,
+                    selectedEpisode = selectedEpisode,
+                    onEpisodeSelected = { episode ->
+                        selectedEpisode = episode
+                    }
+                )
             }
             items(count = playlists.size, key = { playlists[it].first }) { playlistIndex ->
                 val playlist = playlists[playlistIndex]
@@ -288,7 +295,12 @@ private fun jumpToByTag(url: String, context: Context) {
 
 @OptIn(ExperimentalTvMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) {
+fun VideoInfoRow(
+    videoDetail: VideoDetailData,
+    viewModel: VideoDetailViewModel,
+    selectedEpisode: Episode?,
+    onEpisodeSelected: (Episode) -> Unit
+) {
     val focusRequester = remember {
         FocusRequester()
     }
@@ -348,7 +360,7 @@ fun VideoInfoRow(videoDetail: VideoDetailData, viewModel: VideoDetailViewModel) 
                             val episode = videoDetail.playLists.flatMap { it.second }
                                 .find { it.name == his.name }
                             if (episode != null) {
-                                selectedEpisode = episode
+                                onEpisodeSelected(episode)
                                 viewModel.saveVideoHistory(
                                     VideoHistory(
                                         id = videoDetail.id,
