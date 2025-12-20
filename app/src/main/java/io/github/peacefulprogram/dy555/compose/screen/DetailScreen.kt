@@ -408,7 +408,7 @@ fun VideoInfoRow(
                                 shape = MaterialTheme.shapes.small
                             )
                         ),
-                        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.1f)
+                        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f)
                     ) {
                         Text(
                             text = "继续播放",
@@ -609,7 +609,7 @@ fun VideoTag(
                 shape = MaterialTheme.shapes.small
             )
         ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.1f)
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.05f)
     ) {
         Text(
             modifier = Modifier.padding(6.dp, 3.dp),
