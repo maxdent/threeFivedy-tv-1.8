@@ -304,9 +304,6 @@ fun VideoInfoRow(
     val focusRequester = remember {
         FocusRequester()
     }
-    val continueButtonFocusRequester = remember {
-        FocusRequester()
-    }
     var showDescDialog: Boolean by remember {
         mutableStateOf(false)
     }
@@ -352,6 +349,13 @@ fun VideoInfoRow(
                 val his = playHistory.data
                 var isContinueButtonSelected by remember {
                     mutableStateOf(true)  // 默认选中继续播放按钮
+                }
+                val continueButtonFocusRequester = remember {
+                    FocusRequester()
+                }
+                LaunchedEffect(videoDetail.id) {
+                    // 有播放历史时，焦点在继续播放按钮（只执行一次）
+                    continueButtonFocusRequester.requestFocus()
                 }
                 Row(
                     verticalAlignment = Alignment.CenterVertically
@@ -499,11 +503,6 @@ fun VideoInfoRow(
                     },
                     verticalArrangement = spacedBy(20.dp)
                 )
-
-                // 有播放历史时，焦点在继续播放按钮
-                LaunchedEffect(Unit) {
-                    continueButtonFocusRequester.requestFocus()
-                }
             }
 
         }

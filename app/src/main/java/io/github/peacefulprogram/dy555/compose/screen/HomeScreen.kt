@@ -522,8 +522,8 @@ fun NetflixVideos(
         }
         return
     }
-    val videoCardContainerWidth = VideoCardWidth * 1.1f
-    val videoCardContainerHeight = VideoCardHeight * 1.1f
+    val videoCardContainerWidth = VideoCardWidth * 1.25f
+    val videoCardContainerHeight = VideoCardHeight * 1.25f
 
     val gridState = rememberTvLazyGridState()
     val coroutineScope = rememberCoroutineScope()
