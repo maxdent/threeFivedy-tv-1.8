@@ -539,33 +539,43 @@ fun queryVideoUrl(episodeId: String): String? {
     }
 
     fun updateBaseUrl() {
-        try {
-            val doc = Jsoup.connect(Constants.DOMAIN_UPDATE_URL)
-                .userAgent(Constants.USER_AGENT)
-                .timeout(30000)
-                .get()
-            
-            // 查找所有链接
-            val links = doc.select("a")
-            for (link in links) {
-                val text = link.text()
-                // 查找包含"主用"的链接
-                if (text.contains("主用")) {
-                    var newUrl = link.attr("href")
-                    if (newUrl.isNotEmpty()) {
-                        // 确保以/结尾，因为原代码风格似乎偏向保留
-                        if (!newUrl.endsWith("/")) {
-                            newUrl += "/"
+        // 定义两个域名地址
+        val domainUrls = listOf(
+            "https://555dy.tv/",
+            "https://5516617.vip/"
+        )
+
+        for (domainUrl in domainUrls) {
+            try {
+                val doc = Jsoup.connect(domainUrl)
+                    .userAgent(Constants.USER_AGENT)
+                    .timeout(30000)
+                    .get()
+
+                // 查找所有链接
+                val links = doc.select("a")
+                for (link in links) {
+                    val text = link.text()
+                    // 查找包含"主用"的链接
+                    if (text.contains("主用")) {
+                        var newUrl = link.attr("href")
+                        if (newUrl.isNotEmpty()) {
+                            // 确保以/结尾，因为原代码风格似乎偏向保留
+                            if (!newUrl.endsWith("/")) {
+                                newUrl += "/"
+                            }
+                            Constants.BASE_URL = newUrl
+                            return  // 成功获取并设置后直接返回
                         }
-                        Constants.BASE_URL = newUrl
-                        break
                     }
                 }
+            } catch (e: Exception) {
+                // 如果这个域名失败，尝试下一个
+                e.printStackTrace()
+                continue
             }
-        } catch (e: Exception) {
-            e.printStackTrace()
-            // 如果获取失败，保持默认值或抛出异常
         }
+        // 如果所有域名都失败，保持默认值
     }
 
     companion object {
