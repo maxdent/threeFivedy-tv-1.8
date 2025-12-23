@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- 圆形背景 -->
+    <path android:fillColor="#00FFFFFF"
+          android:pathData="M54,54m-35,0a35,35 0,1 1,70 0a35,35 0,1 1,-70 0"/>
+
+    <!-- 播放按钮三角形 -->
+    <path android:fillColor="@color/ic_launcher_foreground"
+          android:pathData="M45,35 L45,73 L75,54 Z"/>
+
+    <!-- 电影胶片元素 -->
+    <path android:fillColor="@color/ic_launcher_foreground"
+          android:pathData="M30,40 L30,68 L33,68 L33,40 Z"/>
+    <path android:fillColor="@color/ic_launcher_foreground"
+          android:pathData="M75,40 L75,68 L78,68 L78,40 Z"/>
+
+    <!-- 装饰性圆点 -->
+    <path android:fillColor="@color/ic_launcher_foreground"
+          android:pathData="M38,42 L38,44 L40,44 L40,42 Z"/>
+    <path android:fillColor="@color/ic_launcher_foreground"
+          android:pathData="M38,64 L38,66 L40,66 L40,64 Z"/>
+    <path android:fillColor="@color/ic_launcher_foreground"
+          android:pathData="M68,42 L68,44 L70,44 L70,42 Z"/>
+    <path android:fillColor="@color/ic_launcher_foreground"
+          android:pathData="M68,64 L68,66 L70,66 L70,64 Z"/>
+</vector>
