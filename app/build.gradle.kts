@@ -32,14 +32,11 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
     kotlinOptions {
-        jvmTarget = "11"
-    }
-    kotlin {
-        jvmToolchain(11)
+        jvmTarget = "1.8"
     }
     buildFeatures {
         compose = true
@@ -79,6 +76,7 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.30.1")
 
     // paging
+    implementation("androidx.paging:paging-runtime:3.2.0-rc01")
     implementation("androidx.paging:paging-compose:3.2.0-rc01")
 
     // compose tv
