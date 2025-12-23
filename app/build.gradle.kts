@@ -79,7 +79,6 @@ dependencies {
     implementation("com.google.accompanist:accompanist-permissions:0.30.1")
 
     // paging
-    implementation("androidx.paging:paging-runtime:3.2.0-rc01")
     implementation("androidx.paging:paging-compose:3.2.0-rc01")
 
     // compose tv
