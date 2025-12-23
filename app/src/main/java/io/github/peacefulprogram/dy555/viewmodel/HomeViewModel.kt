@@ -19,36 +19,35 @@ class HomeViewModel(private val repository: HttpDataRepository) : ViewModel() {
 
     private val refreshTimeMap: MutableMap<String, Long> = ConcurrentHashMap()
 
-    // 首页推荐
+    // 首页推荐 - 添加内存缓存
     private val _recommend: MutableStateFlow<Resource<VideosOfType>> =
         MutableStateFlow(Resource.Loading)
 
     val recommend: StateFlow<Resource<VideosOfType>>
         get() = _recommend
 
-
-    // 电影
+    // 电影 - 添加内存缓存
     private val _movies: MutableStateFlow<Resource<VideosOfType>> =
         MutableStateFlow(Resource.Loading)
 
     val movies: StateFlow<Resource<VideosOfType>>
         get() = _movies
 
-    // 连续剧
+    // 连续剧 - 添加内存缓存
     private val _serialDrama: MutableStateFlow<Resource<VideosOfType>> =
         MutableStateFlow(Resource.Loading)
 
     val serialDrama: StateFlow<Resource<VideosOfType>>
         get() = _serialDrama
 
-    // 动漫
+    // 动漫 - 添加内存缓存
     private val _anime: MutableStateFlow<Resource<VideosOfType>> =
         MutableStateFlow(Resource.Loading)
 
     val anime: StateFlow<Resource<VideosOfType>>
         get() = _anime
 
-    // 综艺
+    // 综艺 - 添加内存缓存
     private val _varietyShow: MutableStateFlow<Resource<VideosOfType>> =
         MutableStateFlow(Resource.Loading)
 
@@ -61,7 +60,7 @@ class HomeViewModel(private val repository: HttpDataRepository) : ViewModel() {
         BasicPagingSource(repository::getNetflix)
     }
         .flow
-//        .cachedIn(viewModelScope)
+        .cachedIn(viewModelScope)
 
     fun refreshRecommend(autoRefresh: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {

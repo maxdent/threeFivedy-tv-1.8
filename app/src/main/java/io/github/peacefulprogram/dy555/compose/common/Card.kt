@@ -39,7 +39,7 @@ fun VideoCard(
     height: Dp,
     video: MediaCardData,
     modifier: Modifier = Modifier,
-    focusedScale: Float = 1.01f,
+    focusedScale: Float = 1.005f,
     isSelected: Boolean = false,
     onVideoLongClick: (MediaCardData) -> Unit = {},
     onVideoClick: (MediaCardData) -> Unit = {},
@@ -100,7 +100,7 @@ fun VideoCard(
         border = CardDefaults.border(
             focusedBorder = Border(
                 border = BorderStroke(
-                    width = 3.dp,
+                    width = 1.5.dp,
                     color = when {
                         isSelected -> Color(0xFFFF0000)  // 鲜红色边框
                         focused -> Color(0xFF00AAFF)   // 鲜蓝色边框

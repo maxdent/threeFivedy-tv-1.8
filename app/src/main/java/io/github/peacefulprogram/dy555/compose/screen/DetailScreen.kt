@@ -408,7 +408,7 @@ fun VideoInfoRow(
                                 shape = MaterialTheme.shapes.small
                             )
                         ),
-                        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.01f)
+                        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.005f)
                     ) {
                         Text(
                             text = "继续播放",
@@ -603,13 +603,13 @@ fun VideoTag(
         border = ClickableSurfaceDefaults.border(
             focusedBorder = Border(
                 border = BorderStroke(
-                    width = 3.dp,
+                    width = 1.5.dp,
                     color = if (isSelected) Color.Green else Color(0xFF00AAFF)  // 选中绿色，焦点蓝色
                 ),
                 shape = MaterialTheme.shapes.small
             )
         ),
-        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.01f)
+        scale = ClickableSurfaceDefaults.scale(focusedScale = 1.005f)
     ) {
         Text(
             modifier = Modifier.padding(6.dp, 3.dp),
