@@ -96,7 +96,7 @@ fun VideoCard(
                 )
             }
         },
-        scale = CardDefaults.scale(focusedScale = if (focused) 1.25f else 1.22f),
+        scale = CardDefaults.scale(focusedScale = if (focused) focusedScale else 1.0f),
         border = CardDefaults.border(
             focusedBorder = Border(
                 border = BorderStroke(
