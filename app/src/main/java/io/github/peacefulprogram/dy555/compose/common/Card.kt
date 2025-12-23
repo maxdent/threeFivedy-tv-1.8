@@ -39,7 +39,7 @@ fun VideoCard(
     height: Dp,
     video: MediaCardData,
     modifier: Modifier = Modifier,
-    focusedScale: Float = 1.002f,
+    focusedScale: Float = 1.0002f,
     isSelected: Boolean = false,
     onVideoLongClick: (MediaCardData) -> Unit = {},
     onVideoClick: (MediaCardData) -> Unit = {},
