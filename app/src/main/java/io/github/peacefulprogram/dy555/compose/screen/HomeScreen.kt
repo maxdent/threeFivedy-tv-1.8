@@ -467,7 +467,7 @@ fun VideoRow(
     onVideoClick: (MediaCardData) -> Unit = {},
     onVideoKeyEvent: ((MediaCardData, KeyEvent) -> Boolean)? = null
 ) {
-    val focusedScale = 1.005f
+    val focusedScale = 1.003f
     val scaleWidth = VideoCardWidth * (focusedScale - 1f) / 2 + 5.dp
     val scaleHeight = VideoCardHeight * (focusedScale - 1f) / 2 + 5.dp
     Column(Modifier.fillMaxWidth()) {
