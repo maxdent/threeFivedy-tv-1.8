@@ -1,10 +1,17 @@
 package io.github.peacefulprogram.dy555.fragment
 
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
+import android.animation.ValueAnimator
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
+import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.core.graphics.drawable.toDrawable
@@ -41,7 +48,6 @@ class VideoPlaybackFragment(
     private val viewModel: PlaybackViewModel
 ) : VideoSupportFragment() {
 
-
     private var exoplayer: ExoPlayer? = null
 
     private var glue: ProgressTransportControlGlue<LeanbackPlayerAdapter>? = null
@@ -49,23 +55,34 @@ class VideoPlaybackFragment(
     private var resumeFrom = -1L
 
     private var backPressed = false
+
+    // 加载界面相关
+    private var loadingContainer: ViewGroup? = null
+    private var loadingProgressBar: View? = null
+    private var loadingText: TextView? = null
+    private var loadingDotsAnimator: ValueAnimator? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.background = Color.BLACK.toDrawable()
+
+        // 创建加载界面
+        createLoadingView(view)
+
         lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.playbackEpisode.collectLatest { playbackEpisode ->
                     when (playbackEpisode) {
                         Resource.Loading -> {
-                            // 换集时暂停并显示加载提示
+                            // 换集时暂停并显示自定义加载界面
                             exoplayer?.pause()
-                            progressBarManager.show()
+                            showLoadingView()
                             // 显示"正在获取视频链接"提示
                             glue?.subtitle = "正在获取视频链接..."
                         }
 
                         is Resource.Success -> {
                             progressBarManager.hide()
+                            hideLoadingView()
                             glue?.subtitle = playbackEpisode.data.name
                             exoplayer?.run {
                                 setMediaItem(MediaItem.fromUri(playbackEpisode.data.url))
@@ -89,6 +106,7 @@ class VideoPlaybackFragment(
 
                         is Resource.Error -> {
                             progressBarManager.hide()
+                            hideLoadingView()
                             requireContext().showLongToast(playbackEpisode.message)
                         }
                     }
@@ -270,5 +288,138 @@ class VideoPlaybackFragment(
         }
     }
 
+    /**
+     * 创建自定义加载界面
+     */
+    private fun createLoadingView(container: View) {
+        val context = requireContext()
+
+        // 创建主容器
+        val mainContainer = FrameLayout(context).apply {
+            id = View.generateViewId()
+            setBackgroundColor(Color.BLACK)
+            visibility = View.GONE
+        }
+
+        // 创建内容容器
+        val contentContainer = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            gravity = android.view.Gravity.CENTER
+            setPadding(80, 80, 80, 80)
+        }
+
+        // 创建进度条容器
+        val progressContainer = FrameLayout(context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = android.view.Gravity.CENTER
+            }
+        }
+
+        // 创建进度条 - 使用 Android 原生 ProgressBar
+        val progressBar = android.widget.ProgressBar(context, null, android.R.attr.progressBarStyleLarge).apply {
+            layoutParams = FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.WRAP_CONTENT,
+                FrameLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                gravity = android.view.Gravity.CENTER
+            }
+            // 设置为不确定模式（转圈动画）
+            isIndeterminate = true
+        }
+
+        // 创建文字容器
+        val textContainer = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = android.view.Gravity.CENTER
+            setPadding(0, 40, 0, 0)
+        }
+
+        // 创建加载文字
+        val loadingText = TextView(context).apply {
+            text = "正在获取视频链接"
+            textSize = 24f
+            setTextColor(Color.WHITE)
+            gravity = android.view.Gravity.CENTER
+        }
+
+        // 组装界面
+        progressContainer.addView(progressBar)
+        textContainer.addView(loadingText)
+        contentContainer.addView(progressContainer)
+        contentContainer.addView(textContainer)
+        mainContainer.addView(contentContainer)
+
+        // 添加到主容器
+        (container as? ViewGroup)?.addView(mainContainer)
+
+        // 保存引用
+        loadingContainer = mainContainer
+        loadingProgressBar = progressBar
+        this.loadingText = loadingText
+
+        // 创建进度条旋转动画
+        createProgressBarAnimation(progressBar)
+    }
+
+    /**
+     * 创建进度条动画（ProgressBar 自带动画，无需额外设置）
+     */
+    private fun createProgressBarAnimation(progressBar: View) {
+        // ProgressBar 自带 indeterminate 动画，无需额外创建
+        // 这里可以保留方法以兼容代码结构
+    }
+
+    /**
+     * 显示加载界面
+     */
+    private fun showLoadingView() {
+        loadingContainer?.let { container ->
+            container.visibility = View.VISIBLE
+            // ProgressBar 自带动画，无需手动启动
+            // 开始文字动画
+            startTextAnimation()
+        }
+    }
+
+    /**
+     * 隐藏加载界面
+     */
+    private fun hideLoadingView() {
+        loadingContainer?.let { container ->
+            container.visibility = View.GONE
+            // ProgressBar 自带动画，会自动停止
+            stopTextAnimation()
+        }
+    }
+
+    /**
+     * 开始文字动画（添加省略号效果）
+     */
+    private fun startTextAnimation() {
+        lifecycleScope.launch {
+            var dotCount = 0
+            while (loadingContainer?.visibility == View.VISIBLE) {
+                loadingText?.text = "正在获取视频链接" + ".".repeat(dotCount)
+                dotCount = (dotCount + 1) % 4
+                delay(500)
+            }
+        }
+    }
+
+    /**
+     * 停止文字动画
+     */
+    private fun stopTextAnimation() {
+        // 这个方法会在循环条件不满足时自动停止
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // ProgressBar 会自动清理，无需手动停止动画
+        loadingDotsAnimator = null
+    }
 
 }
