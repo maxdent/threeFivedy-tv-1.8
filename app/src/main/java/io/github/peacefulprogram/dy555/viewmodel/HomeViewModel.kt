@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.compose.cachedIn
 import io.github.peacefulprogram.dy555.http.BasicPagingSource
 import io.github.peacefulprogram.dy555.http.HttpDataRepository
 import io.github.peacefulprogram.dy555.http.Resource
@@ -12,7 +13,6 @@ import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.cachedIn
 import kotlinx.coroutines.launch
 import java.util.concurrent.ConcurrentHashMap
 
