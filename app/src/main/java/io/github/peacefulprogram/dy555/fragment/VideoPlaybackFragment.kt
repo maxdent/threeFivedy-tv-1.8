@@ -150,11 +150,24 @@ class VideoPlaybackFragment(
         val factory = DefaultHttpDataSource.Factory().apply {
             setUserAgent(Constants.USER_AGENT)
             setDefaultRequestProperties(mapOf("referer" to Constants.BASE_URL))
+            // 优化网络请求配置，提升 m3u8 兼容性
+            setConnectTimeoutMs(20000)
+            setReadTimeoutMs(60000)
         }
         val mediaSourceFactory = DefaultMediaSourceFactory(factory)
-        exoplayer =
-            ExoPlayer.Builder(requireContext()).setMediaSourceFactory(mediaSourceFactory).build()
-                .apply {
+
+        // 创建 ExoPlayer 并优化性能配置，提升 m3u8 播放兼容性
+        exoplayer = ExoPlayer.Builder(requireContext())
+            .setMediaSourceFactory(mediaSourceFactory)
+            // 优化缓冲配置，特别针对 m3u8
+            .setBufferDurationsMs(
+                /* minBufferMs= */ 20_000,
+                /* maxBufferMs= */ 60_000,
+                /* bufferForPlaybackMs= */ 10_000,
+                /* bufferForPlaybackAfterRebufferMs= */ 15_000
+            )
+            .build()
+            .apply {
                     prepareGlue(this)
                     // Don't auto-play until video URL is loaded
                     playWhenReady = false
