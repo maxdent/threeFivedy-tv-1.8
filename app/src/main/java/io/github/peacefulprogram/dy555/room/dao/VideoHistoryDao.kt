@@ -18,21 +18,7 @@ interface VideoHistoryDao {
     @Query("update video_history set epId = :episodeId where id = :videoId")
     suspend fun updateLatestPlayedEpisode(videoId: String, episodeId: String)
 
-    @Query(
-        """
-        select e.videoId,
-               v.epId,
-               v.title,
-               v.pic,
-               e.name epName,
-               e.progress,
-               e.duration
-        from video_history v
-        inner join episode_history e 
-            on v.epId = e.id
-        order by e.timestamp desc
-    """
-    )
+    @Query("SELECT * FROM VideoEpisodeHistory")
     fun queryAllHistory(): PagingSource<Int, VideoEpisodeHistory>
 
 
