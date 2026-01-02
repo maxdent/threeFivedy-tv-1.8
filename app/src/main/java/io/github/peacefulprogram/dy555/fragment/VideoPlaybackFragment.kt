@@ -34,10 +34,12 @@ import io.github.peacefulprogram.dy555.ext.secondsToDuration
 import io.github.peacefulprogram.dy555.ext.showLongToast
 import io.github.peacefulprogram.dy555.ext.showShortToast
 import io.github.peacefulprogram.dy555.fragment.playback.ChooseEpisodeDialog
+import io.github.peacefulprogram.dy555.fragment.playback.ChooseSpeedDialog
 import io.github.peacefulprogram.dy555.fragment.playback.GlueActionCallback
 import io.github.peacefulprogram.dy555.fragment.playback.PlayListAction
 import io.github.peacefulprogram.dy555.fragment.playback.ProgressTransportControlGlue
 import io.github.peacefulprogram.dy555.fragment.playback.ReplayAction
+import io.github.peacefulprogram.dy555.fragment.playback.SpeedAction
 import io.github.peacefulprogram.dy555.http.Resource
 import io.github.peacefulprogram.dy555.viewmodel.PlaybackViewModel
 import kotlinx.coroutines.delay
