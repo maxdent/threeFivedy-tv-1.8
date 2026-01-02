@@ -15,6 +15,7 @@ import io.github.peacefulprogram.dy555.room.entity.VideoHistory
         VideoHistory::class,
         EpisodeHistory::class
     ],
+    views = [VideoEpisodeHistory::class],
     version = 1
 )
 abstract class Dy555Database : RoomDatabase() {

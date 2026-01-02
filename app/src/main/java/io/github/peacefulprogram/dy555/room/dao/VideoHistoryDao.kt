@@ -18,9 +18,8 @@ interface VideoHistoryDao {
     @Query("update video_history set epId = :episodeId where id = :videoId")
     suspend fun updateLatestPlayedEpisode(videoId: String, episodeId: String)
 
-    // TODO: 临时注释掉数据库视图查询，避免编译问题
-    // @Query("SELECT * FROM VideoEpisodeHistory")
-    // fun queryAllHistory(): PagingSource<Int, VideoEpisodeHistory>
+    @Query("SELECT * FROM VideoEpisodeHistory")
+    fun queryAllHistory(): PagingSource<Int, VideoEpisodeHistory>
 
 
     @Query("delete from video_history where id = :id")

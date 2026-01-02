@@ -24,12 +24,11 @@ class PlayHistoryViewModel(
     }
 
 
-    // TODO: 临时注释掉Pager，避免数据库视图编译问题
-    // val pager = Pager(
-    //     config = PagingConfig(20)
-    // ) {
-    //     videoHistoryDao.queryAllHistory()
-    // }
-    //     .flow
+    val pager = Pager(
+        config = PagingConfig(20)
+    ) {
+        videoHistoryDao.queryAllHistory()
+    }
+        .flow
 
 }
