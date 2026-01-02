@@ -44,15 +44,26 @@ class VideoDetailViewModel(
 
     fun fetchHistory() {
         viewModelScope.launch(Dispatchers.Default) {
-            episodeHistoryDao.queryLatestProgress(videoId)?.let {
-                _latestProgress.emit(Resource.Success(it))
+            try {
+                episodeHistoryDao.queryLatestProgress(videoId)?.let {
+                    _latestProgress.emit(Resource.Success(it))
+                } ?: run {
+                    _latestProgress.emit(Resource.Error("暂无播放记录"))
+                }
+            } catch (ex: Exception) {
+                Log.e(TAG, "fetchHistory error: ${ex.message}", ex)
+                _latestProgress.emit(Resource.Error("获取历史记录失败"))
             }
         }
     }
 
     fun saveVideoHistory(video: VideoHistory) {
         viewModelScope.launch(Dispatchers.IO) {
-            videoHistoryDao.saveVideo(video)
+            try {
+                videoHistoryDao.saveVideo(video)
+            } catch (ex: Exception) {
+                Log.e(TAG, "saveVideoHistory error: ${ex.message}", ex)
+            }
         }
     }
 
