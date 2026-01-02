@@ -6,11 +6,11 @@ plugins {
 
 android {
     namespace = "io.github.peacefulprogram.dy555"
-    compileSdk = 33
+    compileSdk = 34
     defaultConfig {
         applicationId = "io.github.peacefulprogram.dy555"
         minSdk = 21
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 8
         versionName = "1.8"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -63,9 +63,9 @@ dependencies {
     val roomVersion = "2.5.1"
     val coilVersion = "2.4.0"
     val composeTvVersion = "1.0.0-alpha07"
-    val media3Version = "1.1.1"
+    val media3Version = "1.2.1"
     implementation("androidx.core:core-ktx:1.10.1")
-    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.21"))
+    implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.9.10"))
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
     implementation(platform("androidx.compose:compose-bom:2022.10.00"))

@@ -26,8 +26,14 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.datasource.DefaultHttpDataSource
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.cache.Cache
+import androidx.media3.exoplayer.cache.LeastRecentlyUsedCacheEvictor
+import androidx.media3.exoplayer.cache.SimpleCache
 import androidx.media3.exoplayer.source.DefaultMediaSourceFactory
+import androidx.media3.exoplayer.source.ProgressiveMediaSource
+import androidx.media3.exoplayer.upstream.DefaultDataSourceFactory
 import androidx.media3.ui.leanback.LeanbackPlayerAdapter
+import java.io.File
 import io.github.peacefulprogram.dy555.Constants
 import io.github.peacefulprogram.dy555.ext.dpToPx
 import io.github.peacefulprogram.dy555.ext.secondsToDuration
@@ -61,6 +67,9 @@ class VideoPlaybackFragment(
     private var loadingProgressBar: View? = null
     private var loadingText: TextView? = null
     private var loadingDotsAnimator: ValueAnimator? = null
+
+    // 播放器缓存实例
+    private var simpleCache: Cache? = null
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.background = Color.BLACK.toDrawable()
@@ -150,11 +159,56 @@ class VideoPlaybackFragment(
         val factory = DefaultHttpDataSource.Factory().apply {
             setUserAgent(Constants.USER_AGENT)
             setDefaultRequestProperties(mapOf("referer" to Constants.BASE_URL))
+            // 优化网络请求配置
+            setConnectTimeoutMs(15000)
+            setReadTimeoutMs(30000)
+            setRetryPolicy(
+                DefaultHttpDataSource.DefaultRetryPolicy(
+                    /* maxRetries= */ 3,
+                    /* timeoutMs= */ 3000,
+                    /* factor= */ 1.5f
+                )
+            )
         }
+
+        // 配置缓存
+        val cacheDir = File(requireContext().cacheDir, "media3_cache")
+        if (!cacheDir.exists()) {
+            cacheDir.mkdirs()
+        }
+        simpleCache = SimpleCache(
+            cacheDir,
+            LeastRecentlyUsedCacheEvictor(100 * 1024 * 1024), // 100MB
+            factory
+        )
+
         val mediaSourceFactory = DefaultMediaSourceFactory(factory)
-        exoplayer =
-            ExoPlayer.Builder(requireContext()).setMediaSourceFactory(mediaSourceFactory).build()
-                .apply {
+
+        // 创建 ExoPlayer 并优化性能配置
+        exoplayer = ExoPlayer.Builder(requireContext())
+            .setMediaSourceFactory(mediaSourceFactory)
+            .setVideoScalingMode(androidx.media3.common.VideoScalingMode.MODE_VIDEO_SCALING_MODE_DEFAULT)
+            .setAudioAttributes(
+                androidx.media3.common.AudioAttributes.Builder()
+                    .setUsage(androidx.media3.common.C.USAGE_MEDIA)
+                    .setContentType(androidx.media3.common.C.AUDIO_CONTENT_TYPE_MOVIE)
+                    .build(),
+                /* handleAudioFocus= */ true
+            )
+            .setHandleAudioBecomingNoisy(true)
+            .setWakeMode(androidx.media3.exoplayer.Player.WAKE_MODE_LOCAL)
+            .setSeekForwardIncrementMs(10000)
+            .setSeekBackIncrementMs(10000)
+            // 优化缓冲配置
+            .setBufferDurationsMs(
+                /* minBufferMs= */ 15_000,
+                /* maxBufferMs= */ 50_000,
+                /* bufferForPlaybackMs= */ 5_000,
+                /* bufferForPlaybackAfterRebufferMs= */ 10_000
+            )
+            .setPauseAtEndOfMediaItems(false)
+            .build()
+            .apply {
                     prepareGlue(this)
                     // Don't auto-play until video URL is loaded
                     playWhenReady = false
@@ -186,6 +240,9 @@ class VideoPlaybackFragment(
             it.release()
             exoplayer = null
         }
+        // 释放缓存资源
+        simpleCache?.release()
+        simpleCache = null
     }
 
     @OptIn(UnstableApi::class)
