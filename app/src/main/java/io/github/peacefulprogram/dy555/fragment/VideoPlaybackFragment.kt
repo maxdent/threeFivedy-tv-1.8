@@ -184,15 +184,18 @@ class VideoPlaybackFragment(
                         private var lastSeekPosition = 0L
                         private var isUserSeeking = false
 
-                        override fun onSeekStarted() {
-                            isUserSeeking = true
-                        }
-
-                        override fun onSeekProcessed() {
-                            if (isUserSeeking) {
-                                isUserSeeking = false
-                                // 拖动进度条后自动播放
-                                play()
+                        override fun onEvents(player: Player, events: Player.Events) {
+                            // 监听进度变化，检测拖动完成
+                            if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) {
+                                val newPosition = player.currentPosition
+                                if (kotlin.math.abs(newPosition - lastSeekPosition) > 1000) {
+                                    isUserSeeking = true
+                                } else if (isUserSeeking) {
+                                    isUserSeeking = false
+                                    // 拖动进度条后自动播放
+                                    play()
+                                }
+                                lastSeekPosition = newPosition
                             }
                         }
                     })
