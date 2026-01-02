@@ -38,6 +38,8 @@ import io.github.peacefulprogram.dy555.fragment.playback.GlueActionCallback
 import io.github.peacefulprogram.dy555.fragment.playback.PlayListAction
 import io.github.peacefulprogram.dy555.fragment.playback.ProgressTransportControlGlue
 import io.github.peacefulprogram.dy555.fragment.playback.ReplayAction
+import io.github.peacefulprogram.dy555.fragment.playback.SpeedAction
+import io.github.peacefulprogram.dy555.fragment.playback.SpeedActionCallback
 import io.github.peacefulprogram.dy555.http.Resource
 import io.github.peacefulprogram.dy555.viewmodel.PlaybackViewModel
 import kotlinx.coroutines.delay
@@ -55,6 +57,10 @@ class VideoPlaybackFragment(
     private var resumeFrom = -1L
 
     private var backPressed = false
+
+    // 倍速播放相关
+    private var speedActionCallback: SpeedActionCallback? = null
+    private var speedAction: SpeedAction? = null
 
     // 加载界面相关
     private var loadingContainer: ViewGroup? = null
@@ -190,6 +196,10 @@ class VideoPlaybackFragment(
 
     @OptIn(UnstableApi::class)
     private fun prepareGlue(localExoplayer: ExoPlayer) {
+        // 创建倍速播放相关对象
+        speedActionCallback = SpeedActionCallback(localExoplayer)
+        speedAction = SpeedAction(requireContext(), speedActionCallback!!.getCurrentSpeed(), speedActionCallback!!.getCurrentSpeedLabel())
+
         glue = ProgressTransportControlGlue(context = requireContext(),
             playerAdapter = LeanbackPlayerAdapter(
                 requireContext(), localExoplayer, 200
@@ -197,10 +207,15 @@ class VideoPlaybackFragment(
             onCreatePrimaryAction = {
                 it.add(PlayListAction(requireContext()))
                 it.add(ReplayAction(requireContext()))
+                it.add(speedAction!!)
             },
             updateProgress = {
                 viewModel.currentPlayPosition = localExoplayer.currentPosition
                 viewModel.videoDuration = localExoplayer.duration
+                // 更新倍速播放显示标签
+                speedAction?.let { action ->
+                    action.label = speedActionCallback!!.getCurrentSpeedLabel()
+                }
             }).apply {
             host = VideoSupportFragmentGlueHost(this@VideoPlaybackFragment)
             title = viewModel.videoTitle
@@ -210,6 +225,7 @@ class VideoPlaybackFragment(
             isControlsOverlayAutoHideEnabled = true
             addActionCallback(replayActionCallback)
             addActionCallback(changePlayVideoActionCallback)
+            addActionCallback(speedActionCallback!!)
             setKeyEventInterceptor { onKeyEvent(it) }
         }
     }
@@ -271,6 +287,32 @@ class VideoPlaybackFragment(
             }
             return true
         }
+
+        // 倍速播放快捷键
+        if (keyEvent.keyCode == KeyEvent.KEYCODE_A) {
+            if (keyEvent.action == KeyEvent.ACTION_DOWN) {
+                // 倍速减慢
+                speedActionCallback?.cycleToPreviousSpeed()
+                speedAction?.let { action ->
+                    action.label = speedActionCallback!!.getCurrentSpeedLabel()
+                    requireContext().showShortToast("播放速度: ${speedActionCallback!!.getCurrentSpeedLabel()}")
+                }
+            }
+            return true
+        }
+
+        if (keyEvent.keyCode == KeyEvent.KEYCODE_D) {
+            if (keyEvent.action == KeyEvent.ACTION_DOWN) {
+                // 倍速加快
+                speedActionCallback?.cycleToNextSpeed()
+                speedAction?.let { action ->
+                    action.label = speedActionCallback!!.getCurrentSpeedLabel()
+                    requireContext().showShortToast("播放速度: ${speedActionCallback!!.getCurrentSpeedLabel()}")
+                }
+            }
+            return true
+        }
+
         return false
     }
 

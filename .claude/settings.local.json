@@ -27,7 +27,8 @@
       "Bash(D:/Devlop/java/jdk-11.0.16.1/bin/java:*)",
       "Bash(git add:*)",
       "Bash(git commit:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(ls:*)"
     ]
   }
 }
