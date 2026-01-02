@@ -62,6 +62,10 @@ class VideoPlaybackFragment(
     private var speedActionCallback: SpeedActionCallback? = null
     private var speedAction: SpeedAction? = null
 
+    // 进度拖动相关
+    private var wasPlayingBeforeSeek = false
+    private var isSeeking = false
+
     // 加载界面相关
     private var loadingContainer: ViewGroup? = null
     private var loadingProgressBar: View? = null
@@ -272,11 +276,30 @@ class VideoPlaybackFragment(
             }
             return true
         }
-        if (keyEvent.keyCode == KeyEvent.KEYCODE_DPAD_CENTER && !isControlsOverlayVisible) {
-            if (exoplayer?.isPlaying == true) {
-                exoplayer?.pause()
+        if (keyEvent.keyCode == KeyEvent.KEYCODE_DPAD_CENTER) {
+            if (!isControlsOverlayVisible) {
+                // 控制面板不可见时：正常播放/暂停切换
+                if (keyEvent.action == KeyEvent.ACTION_DOWN) {
+                    if (exoplayer?.isPlaying == true) {
+                        exoplayer?.pause()
+                    } else {
+                        exoplayer?.play()
+                    }
+                }
             } else {
-                exoplayer?.play()
+                // 控制面板可见时：处理进度拖动
+                if (keyEvent.action == KeyEvent.ACTION_DOWN) {
+                    // 按下时记录播放状态
+                    wasPlayingBeforeSeek = exoplayer?.isPlaying == true
+                    isSeeking = true
+                    exoplayer?.pause() // 拖动时暂停播放
+                } else if (keyEvent.action == KeyEvent.ACTION_UP) {
+                    // 释放时根据之前的播放状态决定是否自动播放
+                    if (wasPlayingBeforeSeek) {
+                        exoplayer?.play() // 如果之前在播放，则恢复播放
+                    }
+                    isSeeking = false
+                }
             }
             return true
         }
@@ -462,6 +485,9 @@ class VideoPlaybackFragment(
         super.onDestroyView()
         // ProgressBar 会自动清理，无需手动停止动画
         loadingDotsAnimator = null
+        // 清理进度拖动状态
+        wasPlayingBeforeSeek = false
+        isSeeking = false
     }
 
 }
