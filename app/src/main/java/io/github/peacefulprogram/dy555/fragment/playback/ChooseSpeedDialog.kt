@@ -5,8 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
-import androidx.leanback.widget.BaseGridView
-import androidx.leanback.widget.VerticalGridView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import io.github.peacefulprogram.dy555.R
 
@@ -31,6 +30,7 @@ class ChooseSpeedDialog(
 
     fun show() {
         val recyclerView = RecyclerView(context).apply {
+            layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             layoutParams = ViewGroup.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT
@@ -45,10 +45,6 @@ class ChooseSpeedDialog(
             .create()
 
         alertDialog?.show()
-    }
-
-    private fun getSelectedIndex(): Int {
-        return speedOptions.indexOfFirst { it.speed == currentSpeed }
     }
 
     private inner class SpeedAdapter : RecyclerView.Adapter<SpeedViewHolder>() {
