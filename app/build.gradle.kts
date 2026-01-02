@@ -63,7 +63,7 @@ dependencies {
     val roomVersion = "2.5.1"
     val coilVersion = "2.4.0"
     val composeTvVersion = "1.0.0-alpha07"
-    val media3Version = "1.0.2"
+    val media3Version = "1.2.1"
     implementation("androidx.core:core-ktx:1.10.1")
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
