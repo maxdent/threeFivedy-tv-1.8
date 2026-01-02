@@ -56,6 +56,9 @@ class VideoPlaybackFragment(
 
     private var backPressed = false
 
+    // 倍速播放相关
+    private var currentSpeed = 1.0f
+
     // 加载界面相关
     private var loadingContainer: ViewGroup? = null
     private var loadingProgressBar: View? = null
@@ -222,6 +225,7 @@ class VideoPlaybackFragment(
             onCreatePrimaryAction = {
                 it.add(PlayListAction(requireContext()))
                 it.add(ReplayAction(requireContext()))
+                it.add(SpeedAction(requireContext()))
             },
             updateProgress = {
                 viewModel.currentPlayPosition = localExoplayer.currentPosition
@@ -235,6 +239,7 @@ class VideoPlaybackFragment(
             isControlsOverlayAutoHideEnabled = true
             addActionCallback(replayActionCallback)
             addActionCallback(changePlayVideoActionCallback)
+            addActionCallback(speedActionCallback)
             setKeyEventInterceptor { onKeyEvent(it) }
         }
     }
@@ -256,6 +261,15 @@ class VideoPlaybackFragment(
 
         override fun onAction(action: Action) {
             openPlayListDialogAndChoose()
+        }
+
+    }
+
+    private val speedActionCallback = object : GlueActionCallback {
+        override fun support(action: Action): Boolean = action is SpeedAction
+
+        override fun onAction(action: Action) {
+            openSpeedDialogAndChoose()
         }
 
     }
@@ -311,6 +325,17 @@ class VideoPlaybackFragment(
         }.apply {
             showNow(fragmentManager, "")
         }
+    }
+
+    private fun openSpeedDialogAndChoose() {
+        ChooseSpeedDialog(
+            context = requireContext(),
+            currentSpeed = currentSpeed
+        ) { speed ->
+            currentSpeed = speed
+            exoplayer?.setPlaybackSpeed(speed)
+            requireContext().showShortToast("播放倍速: ${speed}x")
+        }.show()
     }
 
     /**
