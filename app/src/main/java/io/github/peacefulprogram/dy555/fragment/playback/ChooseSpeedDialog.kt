@@ -56,7 +56,7 @@ class ChooseSpeedDialog(
             requireContext().getColorWithAlpha(
                 R.color.zinc900,
                 0.3f
-            )
+            ).toDrawable()
         )
         dialog!!.window!!.setDimAmount(0f)
         dialog!!.window!!.setBackgroundDrawable(
