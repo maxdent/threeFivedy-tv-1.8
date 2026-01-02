@@ -331,13 +331,14 @@ class VideoPlaybackFragment(
 
     private fun openSpeedDialogAndChoose() {
         ChooseSpeedDialog(
-            context = requireContext(),
             currentSpeed = currentSpeed
         ) { speed ->
             currentSpeed = speed
             exoplayer?.setPlaybackSpeed(speed)
             requireContext().showShortToast("播放倍速: ${speed}x")
-        }.show()
+        }.apply {
+            showNow(requireActivity().supportFragmentManager, "")
+        }
     }
 
     /**
