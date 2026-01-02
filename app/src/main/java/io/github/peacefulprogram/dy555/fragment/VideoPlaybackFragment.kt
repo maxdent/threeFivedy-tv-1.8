@@ -180,6 +180,22 @@ class VideoPlaybackFragment(
                             }
                         }
                     })
+                    addListener(object : Player.Listener {
+                        private var lastSeekPosition = 0L
+                        private var isUserSeeking = false
+
+                        override fun onSeekStarted() {
+                            isUserSeeking = true
+                        }
+
+                        override fun onSeekProcessed() {
+                            if (isUserSeeking) {
+                                isUserSeeking = false
+                                // 拖动进度条后自动播放
+                                play()
+                            }
+                        }
+                    })
                 }
 
     }
