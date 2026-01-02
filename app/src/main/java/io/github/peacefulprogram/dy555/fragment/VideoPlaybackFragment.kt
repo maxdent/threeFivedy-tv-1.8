@@ -218,7 +218,7 @@ class VideoPlaybackFragment(
                 viewModel.videoDuration = localExoplayer.duration
                 // 更新倍速播放显示标签
                 speedAction?.let { action ->
-                    action.label = speedActionCallback!!.getCurrentSpeedLabel()
+                    action.setLabel(speedActionCallback!!.getCurrentSpeedLabel())
                 }
             }).apply {
             host = VideoSupportFragmentGlueHost(this@VideoPlaybackFragment)
@@ -317,7 +317,7 @@ class VideoPlaybackFragment(
                 // 倍速减慢
                 speedActionCallback?.cycleToPreviousSpeed()
                 speedAction?.let { action ->
-                    action.label = speedActionCallback!!.getCurrentSpeedLabel()
+                    action.setLabel(speedActionCallback!!.getCurrentSpeedLabel())
                     requireContext().showShortToast("播放速度: ${speedActionCallback!!.getCurrentSpeedLabel()}")
                 }
             }
@@ -329,7 +329,7 @@ class VideoPlaybackFragment(
                 // 倍速加快
                 speedActionCallback?.cycleToNextSpeed()
                 speedAction?.let { action ->
-                    action.label = speedActionCallback!!.getCurrentSpeedLabel()
+                    action.setLabel(speedActionCallback!!.getCurrentSpeedLabel())
                     requireContext().showShortToast("播放速度: ${speedActionCallback!!.getCurrentSpeedLabel()}")
                 }
             }
