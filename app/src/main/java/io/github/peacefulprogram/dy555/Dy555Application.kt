@@ -61,16 +61,18 @@ class Dy555Application : Application(), ImageLoaderFactory {
 
     private fun roomModule() = module {
         single {
-            Room.databaseBuilder(this@Dy555Application, Dy555Database::class.java, "dy555").apply {
-                if (BuildConfig.DEBUG) {
-                    val queryCallback = object : RoomDatabase.QueryCallback {
-                        override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
-                            Log.i(TAG, "room sql: $sqlQuery  args: $bindArgs")
+            Room.databaseBuilder(this@Dy555Application, Dy555Database::class.java, "dy555")
+                .fallbackToDestructiveMigration() // 解决数据库迁移问题
+                .apply {
+                    if (BuildConfig.DEBUG) {
+                        val queryCallback = object : RoomDatabase.QueryCallback {
+                            override fun onQuery(sqlQuery: String, bindArgs: List<Any?>) {
+                                Log.i(TAG, "room sql: $sqlQuery  args: $bindArgs")
+                            }
                         }
+                        setQueryCallback(queryCallback, Executors.newSingleThreadExecutor())
                     }
-                    setQueryCallback(queryCallback, Executors.newSingleThreadExecutor())
-                }
-            }.build()
+                }.build()
         }
 
         single {
