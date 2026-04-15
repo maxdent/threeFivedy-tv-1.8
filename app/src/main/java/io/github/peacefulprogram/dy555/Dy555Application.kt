@@ -55,6 +55,7 @@ class Dy555Application : Application(), ImageLoaderFactory {
             androidLogger()
             modules(httpModule(), viewModelModule(), roomModule())
         }
+        // First update base URL to ensure we have a working domain
         reloadVideoServer()
         super.onCreate()
     }
