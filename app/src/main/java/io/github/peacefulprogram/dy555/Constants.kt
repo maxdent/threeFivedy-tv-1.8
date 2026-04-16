@@ -6,7 +6,7 @@ object Constants {
 
     val VideoCardWidth = 157.dp
     val VideoCardHeight = 220.dp
-    var BASE_URL = "https://www.55kp9.com/"
+    var BASE_URL = ""
     var PLAY_URL_SERVER: String = ""
     var M3U8_EXTRACT_API_SERVER = "http://v1.tocmcc1.cn:5000"
     const val USER_AGENT =
