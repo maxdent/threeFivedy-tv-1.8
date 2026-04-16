@@ -216,7 +216,7 @@ class Dy555Application : Application(), ImageLoaderFactory {
         val defaultVideoServer = "https://player.dwz0.cc:3653/api"
         GlobalScope.launch(Dispatchers.IO) {
             // 先尝试更新BASE_URL
-            repository.updateBaseUrl()
+            //repository.updateBaseUrl()
             Log.i(TAG, "Current BASE_URL: ${Constants.BASE_URL}")
 
             Constants.PLAY_URL_SERVER = try {
