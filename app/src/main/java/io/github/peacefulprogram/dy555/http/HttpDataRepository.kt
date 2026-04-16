@@ -79,7 +79,7 @@ class HttpDataRepository(private val okHttpClient: OkHttpClient) {
         val resp = Request.Builder()
             .url(Constants.BASE_URL)
             .post(body)
-            .addHeader("cookie", "ge_ua_p=$ge_uaP")
+            .addHeader("cookie", "ge_ua_p=$geUaP")
             .addHeader("X-Ge-Ua-Step", "prev")
             .build()
             .let {
@@ -540,7 +540,7 @@ fun queryVideoUrl(episodeId: String): String? {
 
     fun updateBaseUrl() {
         android.util.Log.d("HttpDataRepository", "updateBaseUrl() 开始执行")
-        Dy555Application.context.showLongToast("开始更新域名...")
+        //Dy555Application.context.showLongToast("开始更新域名...")
         
         // 定义两个域名地址
         val domainUrls = listOf(
@@ -550,7 +550,7 @@ fun queryVideoUrl(episodeId: String): String? {
 
         for ((index, domainUrl) in domainUrls.withIndex()) {
             android.util.Log.d("HttpDataRepository", "尝试第 ${index + 1} 个域名: $domainUrl")
-            Dy555Application.context.showLongToast("尝试域名: $domainUrl")
+            //Dy555Application.context.showLongToast("尝试域名: $domainUrl")
             
             try {
                 val doc = Jsoup.connect(domainUrl)
@@ -559,7 +559,7 @@ fun queryVideoUrl(episodeId: String): String? {
                     .get()
 
                 android.util.Log.d("HttpDataRepository", "成功连接到 $domainUrl")
-                Dy555Application.context.showLongToast("成功连接到: $domainUrl")
+                //Dy555Application.context.showLongToast("成功连接到: $domainUrl")
                 
                 // 查找所有链接
                 val links = doc.select("a")
@@ -573,7 +573,7 @@ fun queryVideoUrl(episodeId: String): String? {
                     if (text.contains("主用")) {
                         var newUrl = link.attr("href")
                         android.util.Log.d("HttpDataRepository", "找到包含'主用'的链接: $newUrl")
-                        Dy555Application.context.showLongToast("找到主用链接: $newUrl")
+                        //Dy555Application.context.showLongToast("找到主用链接: $newUrl")
                         
                         if (newUrl.isNotEmpty()) {
                             // 确保以/结尾，因为原代码风格似乎偏向保留
@@ -581,7 +581,7 @@ fun queryVideoUrl(episodeId: String): String? {
                                 newUrl += "/"
                             }
                             android.util.Log.d("HttpDataRepository", "设置新的 BASE_URL: $newUrl")
-                            Dy555Application.context.showLongToast("设置新域名: $newUrl")
+                            //Dy555Application.context.showLongToast("设置新域名: $newUrl")
                             Constants.BASE_URL = newUrl
                             return  // 成功获取并设置后直接返回
                         }
@@ -589,7 +589,7 @@ fun queryVideoUrl(episodeId: String): String? {
                 }
             } catch (e: Exception) {
                 android.util.Log.e("HttpDataRepository", "连接域名 $domainUrl 失败: ${e.message}", e)
-                Dy555Application.context.showLongToast("连接失败: ${e.message}")
+                //Dy555Application.context.showLongToast("连接失败: ${e.message}")
                 // 如果这个域名失败，尝试下一个
                 continue
             }
@@ -598,7 +598,7 @@ fun queryVideoUrl(episodeId: String): String? {
         // 如果所有域名都失败，使用默认域名
         val defaultUrl = "https://555dy.tv/"
         android.util.Log.w("HttpDataRepository", "所有域名都失败，使用默认域名: $defaultUrl")
-        Dy555Application.context.showLongToast("使用默认域名: $defaultUrl")
+        //Dy555Application.context.showLongToast("使用默认域名: $defaultUrl")
         Constants.BASE_URL = defaultUrl
     }
 
