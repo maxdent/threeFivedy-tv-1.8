@@ -229,8 +229,6 @@ class Dy555Application : Application(), ImageLoaderFactory {
                 }
                 defaultVideoServer
             }
-
-
         }
     }
 }
