@@ -56,8 +56,8 @@ class Dy555Application : Application(), ImageLoaderFactory {
             modules(httpModule(), viewModelModule(), roomModule())
         }
         // First update base URL to ensure we have a working domain
-        //reloadVideoServer()
-        reloadVideoServertest()
+        reloadVideoServer()
+        //reloadVideoServertest()
         super.onCreate()
     }
 
@@ -223,9 +223,9 @@ class Dy555Application : Application(), ImageLoaderFactory {
         val defaultVideoServer = "https://player.dwz0.cc:3653/api"
         GlobalScope.launch(Dispatchers.IO) {
             // 先尝试更新BASE_URL
-            repository.updateBaseUrl()
-            context.showLongToast("Current BASE_URL: ${Constants.BASE_URL}")
-            Log.i(TAG, "Current BASE_URL: ${Constants.BASE_URL}")
+            //repository.updateBaseUrl()
+            //context.showLongToast("Current BASE_URL: ${Constants.BASE_URL}")
+            //Log.i(TAG, "Current BASE_URL: ${Constants.BASE_URL}")
 
             Constants.PLAY_URL_SERVER = try {
                 repository.loadVideoServerUrl()
