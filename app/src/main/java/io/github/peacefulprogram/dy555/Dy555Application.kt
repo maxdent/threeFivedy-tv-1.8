@@ -217,6 +217,7 @@ class Dy555Application : Application(), ImageLoaderFactory {
         GlobalScope.launch(Dispatchers.IO) {
             // 先尝试更新BASE_URL
             repository.updateBaseUrl()
+            context.showLongToast("Current BASE_URL: ${Constants.BASE_URL}")
             Log.i(TAG, "Current BASE_URL: ${Constants.BASE_URL}")
 
             Constants.PLAY_URL_SERVER = try {
