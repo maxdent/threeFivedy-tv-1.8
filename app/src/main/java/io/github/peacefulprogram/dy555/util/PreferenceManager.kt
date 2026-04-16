@@ -20,4 +20,18 @@ object PreferenceManager {
         return getPreferences(context).getString(KEY_M3U8_API_SERVER, DEFAULT_M3U8_API_SERVER)
             ?: DEFAULT_M3U8_API_SERVER
     }
+
+    // 保存网站地址
+    fun saveBaseUrl(context: Context, url: String) {
+        context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            .edit()
+            .putString("base_url", url)
+            .apply()
+    }
+
+    // 获取网站地址
+    fun getBaseUrl(context: Context): String? {
+        return context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE)
+            .getString("base_url", null)
+    }
 }
