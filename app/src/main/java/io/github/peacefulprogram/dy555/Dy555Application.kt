@@ -50,6 +50,11 @@ class Dy555Application : Application(), ImageLoaderFactory {
         context = this
         // Load saved M3U8 API server address
         Constants.M3U8_EXTRACT_API_SERVER = io.github.peacefulprogram.dy555.util.PreferenceManager.getM3u8ApiServer(this)
+        // Load saved base URL (网站地址) - 添加这行
+        val savedBaseUrl = io.github.peacefulprogram.dy555.util.PreferenceManager.getBaseUrl(this)
+        if (!savedBaseUrl.isNullOrBlank()) {
+            Constants.BASE_URL = savedBaseUrl
+        }
         startKoin {
             androidContext(this@Dy555Application)
             androidLogger()
