@@ -542,8 +542,9 @@ fun queryVideoUrl(episodeId: String): String? {
     fun updateBaseUrl() {
         android.util.Log.d("HttpDataRepository", "updateBaseUrl() 开始执行")
         
-        // 定义两个域名地址
+        // 定义多个可能的域名地址
         val domainUrls = listOf(
+            "https://www.5dy0.top/",  // 新域名
             "https://555dy.tv/",
             "https://5516617.vip/"
         )
@@ -598,7 +599,7 @@ fun queryVideoUrl(episodeId: String): String? {
         }
         
         // 如果所有域名都失败，使用默认域名
-        val defaultUrl = "https://555dy.tv/"
+        val defaultUrl = "https://www.5dy0.top/"
         android.util.Log.w("HttpDataRepository", "所有域名都失败，使用默认域名: $defaultUrl")
         Constants.BASE_URL = defaultUrl
     }
