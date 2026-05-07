@@ -555,7 +555,7 @@ fun queryVideoUrl(episodeId: String): String? {
                 // 使用 OkHttpClient 获取 HTML，而不是直接使用 Jsoup.connect
                 val request = Request.Builder()
                     .url(domainUrl)
-                    .userAgent(Constants.USER_AGENT)
+                    .header("User-Agent", Constants.USER_AGENT)
                     .build()
                 
                 val response = okHttpClient.newCall(request).execute()
