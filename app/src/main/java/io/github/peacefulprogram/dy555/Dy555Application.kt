@@ -12,6 +12,7 @@ import coil.ImageLoaderFactory
 import io.github.peacefulprogram.dy555.ext.showLongToast
 import io.github.peacefulprogram.dy555.http.HttpDataRepository
 import io.github.peacefulprogram.dy555.room.Dy555Database
+import io.github.peacefulprogram.dy555.ssl.UnsafeSSLTrustManager
 import io.github.peacefulprogram.dy555.viewmodel.CategoriesViewModel
 import io.github.peacefulprogram.dy555.viewmodel.HomeViewModel
 import io.github.peacefulprogram.dy555.viewmodel.PlayHistoryViewModel
@@ -95,17 +96,7 @@ class Dy555Application : Application(), ImageLoaderFactory {
     }
 
     override fun newImageLoader(): ImageLoader = ImageLoader.Builder(this).okHttpClient {
-        OkHttpClient.Builder()
-            .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-            .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
-            .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-            .hostnameVerifier { _, _ -> true }
-            .addInterceptor { chain ->
-                chain.request().newBuilder().header("user-agent", Constants.USER_AGENT)
-                    .header("referer", Constants.BASE_URL).build().let { chain.proceed(it) }
-            }
-            .sslSocketFactory(sslSocketFactory, trustManager)
-            .build()
+        createUnsafeOkHttpClient()
     }.build()
 
 
@@ -116,24 +107,28 @@ class Dy555Application : Application(), ImageLoaderFactory {
 
         var ge_ua_key: String = ""
 
-        val trustManager by lazy {
-            object : X509TrustManager {
-                override fun checkClientTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                }
-
-                override fun checkServerTrusted(p0: Array<out X509Certificate>?, p1: String?) {
-                }
-
-                override fun getAcceptedIssuers(): Array<X509Certificate> = emptyArray()
-
-            }
-        }
+        // 使用不安全的SSL信任管理器
+        private val unsafeTrustManager = UnsafeSSLTrustManager()
 
         val sslSocketFactory = SSLContext.getInstance("SSL")
             .apply {
-                init(null, arrayOf(trustManager), SecureRandom())
+                init(null, arrayOf(unsafeTrustManager), SecureRandom())
             }.socketFactory
 
+        // 创建不安全的OkHttpClient
+        private fun createUnsafeOkHttpClient(): OkHttpClient {
+            return OkHttpClient.Builder()
+                .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
+                .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                .hostnameVerifier { _, _ -> true }
+                .sslSocketFactory(sslSocketFactory, unsafeTrustManager)
+                .addInterceptor { chain ->
+                    chain.request().newBuilder().header("user-agent", Constants.USER_AGENT)
+                        .header("referer", Constants.BASE_URL).build().let { chain.proceed(it) }
+                }
+                .build()
+        }
     }
 
     private fun httpModule() = module {
@@ -143,6 +138,7 @@ class Dy555Application : Application(), ImageLoaderFactory {
                 .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
                 .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
                 .hostnameVerifier { _, _ -> true }
+                .sslSocketFactory(sslSocketFactory, unsafeTrustManager)
                 .addInterceptor { chain ->
                     val originalReq = chain.request()
                     val req = originalReq
@@ -228,7 +224,7 @@ class Dy555Application : Application(), ImageLoaderFactory {
         val defaultVideoServer = "https://player.dwz0.cc:3653/api"
         GlobalScope.launch(Dispatchers.IO) {
             // 先尝试更新BASE_URL
-            //repository.updateBaseUrl()
+            repository.updateBaseUrl()
             //context.showLongToast("Current BASE_URL: ${Constants.BASE_URL}")
             //Log.i(TAG, "Current BASE_URL: ${Constants.BASE_URL}")
 

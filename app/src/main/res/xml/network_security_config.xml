@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- 解除所有网络访问限制，允许所有IP和域名访问 -->
     <base-config cleartextTrafficPermitted="true">
         <trust-anchors>
-            <certificates src="system"/>
-            <certificates src="user"/>
+            <!-- 信任系统默认证书 -->
+            <certificates src="system" />
+            <!-- 信任用户安装的证书 -->
+            <certificates src="user" />
         </trust-anchors>
     </base-config>
+    
+    <!-- 仅在调试模式下信任所有证书 -->
+    <debug-overrides>
+        <trust-anchors>
+            <certificates src="system" />
+            <certificates src="user" />
+            <!-- 信任所有证书，仅用于调试 -->
+            <certificates src="raw/network_security_config" overridePins="true" />
+        </trust-anchors>
+    </debug-overrides>
 </network-security-config>
