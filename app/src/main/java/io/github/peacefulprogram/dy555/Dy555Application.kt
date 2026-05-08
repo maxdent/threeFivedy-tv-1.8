@@ -11,6 +11,7 @@ import coil.ImageLoader
 import coil.ImageLoaderFactory
 import io.github.peacefulprogram.dy555.ext.showLongToast
 import io.github.peacefulprogram.dy555.http.HttpDataRepository
+import io.github.peacefulprogram.dy555.http.UnsafeOkHttpClient
 import io.github.peacefulprogram.dy555.room.Dy555Database
 import io.github.peacefulprogram.dy555.ssl.UnsafeSSLTrustManager
 import io.github.peacefulprogram.dy555.viewmodel.CategoriesViewModel
@@ -40,7 +41,6 @@ import java.util.concurrent.Executors
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
-import javax.net.ssl.SSLContext
 import javax.net.ssl.X509TrustManager
 
 class Dy555Application : Application(), ImageLoaderFactory {
@@ -96,7 +96,7 @@ class Dy555Application : Application(), ImageLoaderFactory {
     }
 
     override fun newImageLoader(): ImageLoader = ImageLoader.Builder(this).okHttpClient {
-        createUnsafeOkHttpClient()
+        UnsafeOkHttpClient.create()
     }.build()
 
 
@@ -114,31 +114,12 @@ class Dy555Application : Application(), ImageLoaderFactory {
             .apply {
                 init(null, arrayOf(unsafeTrustManager), SecureRandom())
             }.socketFactory
-
-        // 创建不安全的OkHttpClient
-        private fun createUnsafeOkHttpClient(): OkHttpClient {
-            return OkHttpClient.Builder()
-                .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-                .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
-                .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-                .hostnameVerifier { _, _ -> true }
-                .sslSocketFactory(sslSocketFactory, unsafeTrustManager)
-                .addInterceptor { chain ->
-                    chain.request().newBuilder().header("user-agent", Constants.USER_AGENT)
-                        .header("referer", Constants.BASE_URL).build().let { chain.proceed(it) }
-                }
-                .build()
-        }
     }
 
     private fun httpModule() = module {
         single {
-            OkHttpClient.Builder()
-                .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-                .readTimeout(120, java.util.concurrent.TimeUnit.SECONDS)
-                .writeTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
-                .hostnameVerifier { _, _ -> true }
-                .sslSocketFactory(sslSocketFactory, unsafeTrustManager)
+            // 使用不安全的OkHttpClient
+            UnsafeOkHttpClient.create().newBuilder()
                 .addInterceptor { chain ->
                     val originalReq = chain.request()
                     val req = originalReq
