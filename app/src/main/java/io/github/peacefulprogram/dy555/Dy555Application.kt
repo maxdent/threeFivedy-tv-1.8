@@ -41,11 +41,10 @@ import java.util.concurrent.Executors
 import javax.crypto.Cipher
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.SecretKeySpec
-import javax.net.ssl.X509TrustManager
 
 class Dy555Application : Application(), ImageLoaderFactory {
 
-    private val TAG = Dy555Application::class.java.simpleName
+    private val TAG = Dy555Application::class.simpleName
 
     override fun onCreate() {
         context = this
@@ -109,11 +108,6 @@ class Dy555Application : Application(), ImageLoaderFactory {
 
         // 使用不安全的SSL信任管理器
         private val unsafeTrustManager = UnsafeSSLTrustManager()
-
-        val sslSocketFactory = SSLContext.getInstance("SSL")
-            .apply {
-                init(null, arrayOf(unsafeTrustManager), SecureRandom())
-            }.socketFactory
     }
 
     private fun httpModule() = module {
