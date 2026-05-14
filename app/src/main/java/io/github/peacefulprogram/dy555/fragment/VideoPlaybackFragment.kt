@@ -295,7 +295,7 @@ class VideoPlaybackFragment(
         override fun support(action: Action): Boolean = action is SpeedAction
 
         override fun onAction(action: Action) {
-            if (isAdded) {
+            if (isAdded && activity != null) {
                 openSpeedDialogAndChoose()
             }
         }
@@ -306,7 +306,7 @@ class VideoPlaybackFragment(
         override fun support(action: Action): Boolean = action is ExternalPlayerAction
 
         override fun onAction(action: Action) {
-            if (isAdded) {
+            if (isAdded && activity != null) {
                 openExternalPlayerDialog()
             }
         }
@@ -344,7 +344,7 @@ class VideoPlaybackFragment(
 
         if (keyEvent.keyCode == KeyEvent.KEYCODE_MENU) {
             if (keyEvent.action == KeyEvent.ACTION_UP) {
-                if (isAdded) {
+                if (isAdded && activity != null) {
                     openPlayListDialogAndChoose()
                 }
             }
@@ -354,7 +354,7 @@ class VideoPlaybackFragment(
     }
 
     private fun openPlayListDialogAndChoose() {
-        if (!isAdded) return
+        if (!isAdded || activity == null) return
         
         val fragmentManager = requireActivity().supportFragmentManager
         val current = viewModel.episode
@@ -370,7 +370,7 @@ class VideoPlaybackFragment(
     }
 
     private fun openSpeedDialogAndChoose() {
-        if (!isAdded) return
+        if (!isAdded || activity == null) return
         
         ChooseSpeedDialog(
             currentSpeed = currentSpeed
@@ -387,7 +387,7 @@ class VideoPlaybackFragment(
      * 打开外部播放器选择对话框
      */
     private fun openExternalPlayerDialog() {
-        if (!isAdded) return
+        if (!isAdded || activity == null) return
         
         if (currentVideoUrl == null) {
             requireContext().showLongToast("暂无播放地址")
@@ -416,7 +416,7 @@ class VideoPlaybackFragment(
      * 启动外部播放器
      */
     private fun launchExternalPlayer(player: VideoPlayer) {
-        if (!isAdded) return
+        if (!isAdded || activity == null) return
         
         if (currentVideoUrl == null || currentVideoTitle == null) {
             requireContext().showLongToast("暂无播放地址")
