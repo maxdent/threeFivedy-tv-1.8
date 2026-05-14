@@ -555,6 +555,22 @@ class VideoPlaybackFragment(
             var dotCount = 0
             while (loadingContainer?.visibility == View.VISIBLE) {
                 loadingText?.text = "正在获取视频链接" + ".".repeat(dotCount)
+                dotCount = (dotCount + 1) % 4
+                delay(500)
+            }
+        }
+    }
+
+    /**
+     * 停止文字动画
+     */
+    private fun stopTextAnimation() {
+        // 这个方法会在循环条件不满足时自动停止
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // ProgressBar 会自动清理，无需手动停止动画
         loadingDotsAnimator = null
     }
 
