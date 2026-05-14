@@ -246,7 +246,7 @@ class VideoPlaybackFragment(
                 it.add(ReplayAction(requireContext()))
                 it.add(SpeedAction(requireContext()))
                 // 添加 MX Player 按钮
-                it.add(MxPlayerAction(requireContext()))
+                it.add(MxPlayerAction(R.id.mx_player_action, R.drawable.ic_mx_player))
             },
             updateProgress = {
                 viewModel.currentPlayPosition = localExoplayer.currentPosition
