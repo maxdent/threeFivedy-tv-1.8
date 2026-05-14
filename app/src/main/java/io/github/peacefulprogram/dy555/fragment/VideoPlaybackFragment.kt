@@ -35,12 +35,16 @@ import io.github.peacefulprogram.dy555.ext.showLongToast
 import io.github.peacefulprogram.dy555.ext.showShortToast
 import io.github.peacefulprogram.dy555.fragment.playback.ChooseEpisodeDialog
 import io.github.peacefulprogram.dy555.fragment.playback.ChooseSpeedDialog
+import io.github.peacefulprogram.dy555.fragment.playback.ExternalPlayerDialog
 import io.github.peacefulprogram.dy555.fragment.playback.GlueActionCallback
 import io.github.peacefulprogram.dy555.fragment.playback.PlayListAction
 import io.github.peacefulprogram.dy555.fragment.playback.ProgressTransportControlGlue
 import io.github.peacefulprogram.dy555.fragment.playback.ReplayAction
 import io.github.peacefulprogram.dy555.fragment.playback.SpeedAction
+import io.github.peacefulprogram.dy555.http.Episode
 import io.github.peacefulprogram.dy555.http.Resource
+import io.github.peacefulprogram.dy555.player.ExternalPlayerManager
+import io.github.peacefulprogram.dy555.player.VideoPlayer
 import io.github.peacefulprogram.dy555.viewmodel.PlaybackViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -66,9 +70,18 @@ class VideoPlaybackFragment(
     private var loadingProgressBar: View? = null
     private var loadingText: TextView? = null
     private var loadingDotsAnimator: ValueAnimator? = null
+    
+    // 外部播放器相关
+    private lateinit var externalPlayerManager: ExternalPlayerManager
+    private var currentVideoUrl: String? = null
+    private var currentVideoTitle: String? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.background = Color.BLACK.toDrawable()
+
+        // 初始化外部播放器管理器
+        externalPlayerManager = ExternalPlayerManager(requireContext())
 
         // 创建加载界面
         createLoadingView(view)
@@ -89,6 +102,11 @@ class VideoPlaybackFragment(
                             progressBarManager.hide()
                             hideLoadingView()
                             glue?.subtitle = playbackEpisode.data.name
+                            
+                            // 保存当前播放信息
+                            currentVideoUrl = playbackEpisode.data.url
+                            currentVideoTitle = "${viewModel.videoTitle} - ${playbackEpisode.data.name}"
+                            
                             exoplayer?.run {
                                 setMediaItem(MediaItem.fromUri(playbackEpisode.data.url))
                                 prepare()
@@ -146,7 +164,7 @@ class VideoPlaybackFragment(
         super.onStop()
         if (Build.VERSION.SDK_INT > 23) {
             resumeFrom = exoplayer!!.currentPosition
-            destroyPlayer();
+            destroyPlayer()
         }
     }
 
@@ -166,45 +184,45 @@ class VideoPlaybackFragment(
             .setMediaSourceFactory(mediaSourceFactory)
             .build()
             .apply {
-                    prepareGlue(this)
-                    // Don't auto-play until video URL is loaded
-                    playWhenReady = false
-                    addListener(object : Player.Listener {
-                        override fun onPlaybackStateChanged(playbackState: Int) {
-                            if (playbackState == ExoPlayer.STATE_ENDED) {
-                                viewModel.playNextEpisodeIfExists()
-                            }
+                prepareGlue(this)
+                // Don't auto-play until video URL is loaded
+                playWhenReady = false
+                addListener(object : Player.Listener {
+                    override fun onPlaybackStateChanged(playbackState: Int) {
+                        if (playbackState == ExoPlayer.STATE_ENDED) {
+                            viewModel.playNextEpisodeIfExists()
                         }
+                    }
 
-                        override fun onIsPlayingChanged(isPlaying: Boolean) {
-                            if (isPlaying) {
-                                viewModel.startSaveHistory()
-                            } else {
-                                viewModel.saveHistory()
-                                viewModel.stopSaveHistory()
-                            }
+                    override fun onIsPlayingChanged(isPlaying: Boolean) {
+                        if (isPlaying) {
+                            viewModel.startSaveHistory()
+                        } else {
+                            viewModel.saveHistory()
+                            viewModel.stopSaveHistory()
                         }
-                    })
-                    addListener(object : Player.Listener {
-                        private var lastSeekPosition = 0L
-                        private var isUserSeeking = false
+                    }
+                })
+                addListener(object : Player.Listener {
+                    private var lastSeekPosition = 0L
+                    private var isUserSeeking = false
 
-                        override fun onEvents(player: Player, events: Player.Events) {
-                            // 监听进度变化，检测拖动完成
-                            if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) {
-                                val newPosition = player.currentPosition
-                                if (kotlin.math.abs(newPosition - lastSeekPosition) > 1000) {
-                                    isUserSeeking = true
-                                } else if (isUserSeeking) {
-                                    isUserSeeking = false
-                                    // 拖动进度条后自动播放
-                                    play()
-                                }
-                                lastSeekPosition = newPosition
+                    override fun onEvents(player: Player, events: Player.Events) {
+                        // 监听进度变化，检测拖动完成
+                        if (events.contains(Player.EVENT_POSITION_DISCONTINUITY)) {
+                            val newPosition = player.currentPosition
+                            if (kotlin.math.abs(newPosition - lastSeekPosition) > 1000) {
+                                isUserSeeking = true
+                            } else if (isUserSeeking) {
+                                isUserSeeking = false
+                                // 拖动进度条后自动播放
+                                play()
                             }
+                            lastSeekPosition = newPosition
                         }
-                    })
-                }
+                    }
+                })
+            }
 
     }
 
@@ -228,6 +246,8 @@ class VideoPlaybackFragment(
                 it.add(PlayListAction(requireContext()))
                 it.add(ReplayAction(requireContext()))
                 it.add(SpeedAction(requireContext()))
+                // 添加外部播放器按钮
+                it.add(ExternalPlayerAction(requireContext()))
             },
             updateProgress = {
                 viewModel.currentPlayPosition = localExoplayer.currentPosition
@@ -242,6 +262,7 @@ class VideoPlaybackFragment(
             addActionCallback(replayActionCallback)
             addActionCallback(changePlayVideoActionCallback)
             addActionCallback(speedActionCallback)
+            addActionCallback(externalPlayerActionCallback)
             setKeyEventInterceptor { onKeyEvent(it) }
         }
     }
@@ -274,6 +295,14 @@ class VideoPlaybackFragment(
             openSpeedDialogAndChoose()
         }
 
+    }
+
+    private val externalPlayerActionCallback = object : GlueActionCallback {
+        override fun support(action: Action): Boolean = action is ExternalPlayerAction
+
+        override fun onAction(action: Action) {
+            openExternalPlayerDialog()
+        }
     }
 
 
@@ -338,6 +367,59 @@ class VideoPlaybackFragment(
             requireContext().showShortToast("播放倍速: ${speed}x")
         }.apply {
             showNow(requireActivity().supportFragmentManager, "")
+        }
+    }
+
+    /**
+     * 打开外部播放器选择对话框
+     */
+    private fun openExternalPlayerDialog() {
+        if (currentVideoUrl == null) {
+            requireContext().showLongToast("暂无播放地址")
+            return
+        }
+
+        val dialog = ExternalPlayerDialog(
+            context = requireContext(),
+            externalPlayerManager = externalPlayerManager,
+            onPlayerSelected = { player ->
+                launchExternalPlayer(player)
+            },
+            onCancel = {
+                // 用户取消选择，继续使用内置播放器
+            }
+        )
+
+        dialog.setOnConfirmClickListener {
+            dialog.confirmSelection()
+        }
+
+        dialog.show()
+    }
+
+    /**
+     * 启动外部播放器
+     */
+    private fun launchExternalPlayer(player: VideoPlayer) {
+        if (currentVideoUrl == null || currentVideoTitle == null) {
+            requireContext().showLongToast("暂无播放地址")
+            return
+        }
+
+        val success = externalPlayerManager.launchPlayer(
+            player = player,
+            videoUrl = currentVideoUrl!!,
+            title = currentVideoTitle!!,
+            position = exoplayer?.currentPosition ?: 0L,
+            speed = currentSpeed
+        )
+
+        if (success) {
+            requireContext().showShortToast("正在启动 ${player.name}...")
+            // 暂停当前播放器
+            exoplayer?.pause()
+        } else {
+            requireContext().showLongToast("启动 ${player.name} 失败，请检查应用是否正常")
         }
     }
 
