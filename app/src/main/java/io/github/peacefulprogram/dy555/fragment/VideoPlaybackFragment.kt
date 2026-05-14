@@ -246,7 +246,7 @@ class VideoPlaybackFragment(
                 it.add(ReplayAction(requireContext()))
                 it.add(SpeedAction(requireContext()))
                 // 添加 MX Player 按钮
-                it.add(MxPlayerAction(R.id.mx_player_action, R.drawable.ic_mx_player))
+                it.add(MxPlayerAction(requireContext()))
             },
             updateProgress = {
                 viewModel.currentPlayPosition = localExoplayer.currentPosition
@@ -283,7 +283,9 @@ class VideoPlaybackFragment(
 
         override fun onAction(action: Action) {
             if (isAdded) {
-                openPlayListDialogAndChoose()
+                activity?.let { activity ->
+                    openPlayListDialogAndChoose(activity)
+                }
             }
         }
 
