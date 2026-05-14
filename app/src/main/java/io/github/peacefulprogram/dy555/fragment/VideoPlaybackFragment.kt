@@ -35,17 +35,15 @@ import io.github.peacefulprogram.dy555.ext.showLongToast
 import io.github.peacefulprogram.dy555.ext.showShortToast
 import io.github.peacefulprogram.dy555.fragment.playback.ChooseEpisodeDialog
 import io.github.peacefulprogram.dy555.fragment.playback.ChooseSpeedDialog
-import io.github.peacefulprogram.dy555.fragment.playback.ExternalPlayerDialog
 import io.github.peacefulprogram.dy555.fragment.playback.GlueActionCallback
+import io.github.peacefulprogram.dy555.fragment.playback.MxPlayerAction
 import io.github.peacefulprogram.dy555.fragment.playback.PlayListAction
 import io.github.peacefulprogram.dy555.fragment.playback.ProgressTransportControlGlue
 import io.github.peacefulprogram.dy555.fragment.playback.ReplayAction
 import io.github.peacefulprogram.dy555.fragment.playback.SpeedAction
-import io.github.peacefulprogram.dy555.fragment.playback.ExternalPlayerAction
 import io.github.peacefulprogram.dy555.http.Episode
 import io.github.peacefulprogram.dy555.http.Resource
-import io.github.peacefulprogram.dy555.player.ExternalPlayerManager
-import io.github.peacefulprogram.dy555.player.VideoPlayer
+import io.github.peacefulprogram.dy555.player.MxPlayerManager
 import io.github.peacefulprogram.dy555.viewmodel.PlaybackViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -72,8 +70,8 @@ class VideoPlaybackFragment(
     private var loadingText: TextView? = null
     private var loadingDotsAnimator: ValueAnimator? = null
     
-    // 外部播放器相关
-    private lateinit var externalPlayerManager: ExternalPlayerManager
+    // MX Player 相关
+    private lateinit var mxPlayerManager: MxPlayerManager
     private var currentVideoUrl: String? = null
     private var currentVideoTitle: String? = null
 
@@ -81,8 +79,8 @@ class VideoPlaybackFragment(
         super.onViewCreated(view, savedInstanceState)
         view.background = Color.BLACK.toDrawable()
 
-        // 初始化外部播放器管理器
-        externalPlayerManager = ExternalPlayerManager(requireContext())
+        // 初始化 MX Player 管理器
+        mxPlayerManager = MxPlayerManager(requireContext())
 
         // 创建加载界面
         createLoadingView(view)
@@ -247,8 +245,8 @@ class VideoPlaybackFragment(
                 it.add(PlayListAction(requireContext()))
                 it.add(ReplayAction(requireContext()))
                 it.add(SpeedAction(requireContext()))
-                // 添加外部播放器按钮
-                it.add(ExternalPlayerAction(requireContext()))
+                // 添加 MX Player 按钮
+                it.add(MxPlayerAction(requireContext()))
             },
             updateProgress = {
                 viewModel.currentPlayPosition = localExoplayer.currentPosition
@@ -263,7 +261,7 @@ class VideoPlaybackFragment(
             addActionCallback(replayActionCallback)
             addActionCallback(changePlayVideoActionCallback)
             addActionCallback(speedActionCallback)
-            addActionCallback(externalPlayerActionCallback)
+            addActionCallback(mxPlayerActionCallback)
             setKeyEventInterceptor { onKeyEvent(it) }
         }
     }
@@ -304,14 +302,12 @@ class VideoPlaybackFragment(
 
     }
 
-    private val externalPlayerActionCallback = object : GlueActionCallback {
-        override fun support(action: Action): Boolean = action is ExternalPlayerAction
+    private val mxPlayerActionCallback = object : GlueActionCallback {
+        override fun support(action: Action): Boolean = action is MxPlayerAction
 
         override fun onAction(action: Action) {
             if (isAdded) {
-                activity?.let { activity ->
-                    openExternalPlayerDialog(activity)
-                }
+                launchMxPlayer()
             }
         }
     }
@@ -386,36 +382,9 @@ class VideoPlaybackFragment(
     }
 
     /**
-     * 打开外部播放器选择对话框
+     * 启动 MX Player
      */
-    private fun openExternalPlayerDialog(activity: android.app.Activity) {
-        if (currentVideoUrl == null) {
-            requireContext().showLongToast("暂无播放地址")
-            return
-        }
-
-        val dialog = ExternalPlayerDialog(
-            context = requireContext(),
-            externalPlayerManager = externalPlayerManager,
-            onPlayerSelected = { player ->
-                launchExternalPlayer(player)
-            },
-            onCancel = {
-                // 用户取消选择，继续使用内置播放器
-            }
-        )
-
-        dialog.setOnConfirmClickListener {
-            dialog.confirmSelection()
-        }
-
-        dialog.show()
-    }
-
-    /**
-     * 启动外部播放器
-     */
-    private fun launchExternalPlayer(player: VideoPlayer) {
+    private fun launchMxPlayer() {
         if (!isAdded) return
         
         if (currentVideoUrl == null || currentVideoTitle == null) {
@@ -423,8 +392,7 @@ class VideoPlaybackFragment(
             return
         }
 
-        val success = externalPlayerManager.launchPlayer(
-            player = player,
+        val success = mxPlayerManager.launchMxPlayer(
             videoUrl = currentVideoUrl!!,
             title = currentVideoTitle!!,
             position = exoplayer?.currentPosition ?: 0L,
@@ -432,11 +400,11 @@ class VideoPlaybackFragment(
         )
 
         if (success) {
-            requireContext().showShortToast("正在启动 ${player.name}...")
+            requireContext().showShortToast("正在启动 MX Player...")
             // 暂停当前播放器
             exoplayer?.pause()
         } else {
-            requireContext().showLongToast("启动 ${player.name} 失败，请检查应用是否正常")
+            requireContext().showLongToast("启动 MX Player 失败，请检查应用是否正常")
         }
     }
 
