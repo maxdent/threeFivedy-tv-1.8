@@ -295,8 +295,10 @@ class VideoPlaybackFragment(
         override fun support(action: Action): Boolean = action is SpeedAction
 
         override fun onAction(action: Action) {
-            if (isAdded && activity != null) {
-                openSpeedDialogAndChoose()
+            if (isAdded) {
+                activity?.let { activity ->
+                    openSpeedDialogAndChoose(activity)
+                }
             }
         }
 
@@ -306,8 +308,10 @@ class VideoPlaybackFragment(
         override fun support(action: Action): Boolean = action is ExternalPlayerAction
 
         override fun onAction(action: Action) {
-            if (isAdded && activity != null) {
-                openExternalPlayerDialog()
+            if (isAdded) {
+                activity?.let { activity ->
+                    openExternalPlayerDialog(activity)
+                }
             }
         }
     }
@@ -344,8 +348,10 @@ class VideoPlaybackFragment(
 
         if (keyEvent.keyCode == KeyEvent.KEYCODE_MENU) {
             if (keyEvent.action == KeyEvent.ACTION_UP) {
-                if (isAdded && activity != null) {
-                    openPlayListDialogAndChoose()
+                if (isAdded) {
+                    activity?.let { activity ->
+                        openPlayListDialogAndChoose(activity)
+                    }
                 }
             }
             return true
@@ -353,10 +359,8 @@ class VideoPlaybackFragment(
         return false
     }
 
-    private fun openPlayListDialogAndChoose() {
-        if (!isAdded || activity == null) return
-        
-        val fragmentManager = requireActivity().supportFragmentManager
+    private fun openPlayListDialogAndChoose(activity: android.app.Activity) {
+        val fragmentManager = activity.supportFragmentManager
         val current = viewModel.episode
         val defaultSelectIndex = viewModel.playlist.indexOfFirst { it.id == current.id }
         ChooseEpisodeDialog(dataList = viewModel.playlist,
@@ -369,9 +373,7 @@ class VideoPlaybackFragment(
         }
     }
 
-    private fun openSpeedDialogAndChoose() {
-        if (!isAdded || activity == null) return
-        
+    private fun openSpeedDialogAndChoose(activity: android.app.Activity) {
         ChooseSpeedDialog(
             currentSpeed = currentSpeed
         ) { speed ->
@@ -379,16 +381,14 @@ class VideoPlaybackFragment(
             exoplayer?.setPlaybackSpeed(speed)
             requireContext().showShortToast("播放倍速: ${speed}x")
         }.apply {
-            showNow(requireActivity().supportFragmentManager, "")
+            showNow(activity.supportFragmentManager, "")
         }
     }
 
     /**
      * 打开外部播放器选择对话框
      */
-    private fun openExternalPlayerDialog() {
-        if (!isAdded || activity == null) return
-        
+    private fun openExternalPlayerDialog(activity: android.app.Activity) {
         if (currentVideoUrl == null) {
             requireContext().showLongToast("暂无播放地址")
             return
@@ -416,7 +416,7 @@ class VideoPlaybackFragment(
      * 启动外部播放器
      */
     private fun launchExternalPlayer(player: VideoPlayer) {
-        if (!isAdded || activity == null) return
+        if (!isAdded) return
         
         if (currentVideoUrl == null || currentVideoTitle == null) {
             requireContext().showLongToast("暂无播放地址")
