@@ -25,6 +25,7 @@ class ExternalPlayerDialog(
     
     private var dialog: AlertDialog? = null
     private var rememberChoiceCheckBox: android.widget.CheckBox? = null
+    private var confirmListener: (() -> Unit)? = null
     
     /**
      * 显示播放器选择对话框
@@ -48,6 +49,9 @@ class ExternalPlayerDialog(
             .setView(dialogView)
             .setNegativeButton("取消", DialogInterface.OnClickListener { _, _ -> onCancel() })
             .setNeutralButton("使用内置播放器", DialogInterface.OnClickListener { _, _ -> onCancel() })
+            .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ ->
+                confirmListener?.invoke()
+            })
         
         dialog = builder.create()
         dialog?.show()
@@ -144,7 +148,7 @@ class ExternalPlayerDialog(
      * 设置确认按钮点击监听
      */
     fun setOnConfirmClickListener(listener: () -> Unit) {
-        dialog?.setPositiveButton("确定", DialogInterface.OnClickListener { _, _ -> listener() })
+        confirmListener = listener
     }
     
     /**
