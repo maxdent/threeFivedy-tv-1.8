@@ -2,6 +2,7 @@ package io.github.peacefulprogram.dy555.fragment.playback
 
 import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.RadioButton
@@ -36,7 +37,7 @@ class ExternalPlayerDialog(
             AlertDialog.Builder(context)
                 .setTitle("无可用播放器")
                 .setMessage("未检测到可用的外部播放器，请先安装 VLC、MX Player 等播放器。")
-                .setPositiveButton("确定", null) { _, _ -> onCancel() }
+                .setPositiveButton("确定", DialogInterface.OnClickListener { _, _ -> onCancel() })
                 .show()
             return
         }
@@ -45,8 +46,8 @@ class ExternalPlayerDialog(
         val builder = AlertDialog.Builder(context)
             .setTitle("选择播放器")
             .setView(dialogView)
-            .setNegativeButton("取消") { _, _ -> onCancel() }
-            .setNeutralButton("使用内置播放器") { _, _ -> onCancel() }
+            .setNegativeButton("取消", DialogInterface.OnClickListener { _, _ -> onCancel() })
+            .setNeutralButton("使用内置播放器", DialogInterface.OnClickListener { _, _ -> onCancel() })
         
         dialog = builder.create()
         dialog?.show()
@@ -143,7 +144,7 @@ class ExternalPlayerDialog(
      * 设置确认按钮点击监听
      */
     fun setOnConfirmClickListener(listener: () -> Unit) {
-        dialog?.setPositiveButton("确定", null) { _, _ -> listener() }
+        dialog?.setPositiveButton("确定", DialogInterface.OnClickListener { _, _ -> listener() })
     }
     
     /**
