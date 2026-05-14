@@ -284,7 +284,9 @@ class VideoPlaybackFragment(
         override fun support(action: Action): Boolean = action is PlayListAction
 
         override fun onAction(action: Action) {
-            openPlayListDialogAndChoose()
+            if (isAdded) {
+                openPlayListDialogAndChoose()
+            }
         }
 
     }
@@ -293,7 +295,9 @@ class VideoPlaybackFragment(
         override fun support(action: Action): Boolean = action is SpeedAction
 
         override fun onAction(action: Action) {
-            openSpeedDialogAndChoose()
+            if (isAdded) {
+                openSpeedDialogAndChoose()
+            }
         }
 
     }
@@ -302,7 +306,9 @@ class VideoPlaybackFragment(
         override fun support(action: Action): Boolean = action is ExternalPlayerAction
 
         override fun onAction(action: Action) {
-            openExternalPlayerDialog()
+            if (isAdded) {
+                openExternalPlayerDialog()
+            }
         }
     }
 
@@ -338,7 +344,9 @@ class VideoPlaybackFragment(
 
         if (keyEvent.keyCode == KeyEvent.KEYCODE_MENU) {
             if (keyEvent.action == KeyEvent.ACTION_UP) {
-                openPlayListDialogAndChoose()
+                if (isAdded) {
+                    openPlayListDialogAndChoose()
+                }
             }
             return true
         }
@@ -346,6 +354,8 @@ class VideoPlaybackFragment(
     }
 
     private fun openPlayListDialogAndChoose() {
+        if (!isAdded) return
+        
         val fragmentManager = requireActivity().supportFragmentManager
         val current = viewModel.episode
         val defaultSelectIndex = viewModel.playlist.indexOfFirst { it.id == current.id }
@@ -360,6 +370,8 @@ class VideoPlaybackFragment(
     }
 
     private fun openSpeedDialogAndChoose() {
+        if (!isAdded) return
+        
         ChooseSpeedDialog(
             currentSpeed = currentSpeed
         ) { speed ->
@@ -375,6 +387,8 @@ class VideoPlaybackFragment(
      * 打开外部播放器选择对话框
      */
     private fun openExternalPlayerDialog() {
+        if (!isAdded) return
+        
         if (currentVideoUrl == null) {
             requireContext().showLongToast("暂无播放地址")
             return
@@ -402,6 +416,8 @@ class VideoPlaybackFragment(
      * 启动外部播放器
      */
     private fun launchExternalPlayer(player: VideoPlayer) {
+        if (!isAdded) return
+        
         if (currentVideoUrl == null || currentVideoTitle == null) {
             requireContext().showLongToast("暂无播放地址")
             return
@@ -539,22 +555,6 @@ class VideoPlaybackFragment(
             var dotCount = 0
             while (loadingContainer?.visibility == View.VISIBLE) {
                 loadingText?.text = "正在获取视频链接" + ".".repeat(dotCount)
-                dotCount = (dotCount + 1) % 4
-                delay(500)
-            }
-        }
-    }
-
-    /**
-     * 停止文字动画
-     */
-    private fun stopTextAnimation() {
-        // 这个方法会在循环条件不满足时自动停止
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        // ProgressBar 会自动清理，无需手动停止动画
         loadingDotsAnimator = null
     }
 
