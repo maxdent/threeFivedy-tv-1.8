@@ -36,7 +36,7 @@ class ExternalPlayerDialog(
             AlertDialog.Builder(context)
                 .setTitle("无可用播放器")
                 .setMessage("未检测到可用的外部播放器，请先安装 VLC、MX Player 等播放器。")
-                .setPositiveButton("确定") { _, _ -> onCancel() }
+                .setPositiveButton("确定", null)
                 .show()
             return
         }
