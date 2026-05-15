@@ -16,7 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.core.graphics.drawable.toDrawable
-import androidx.fragment.app.Activity as FragmentActivity
+import androidx.fragment.app.FragmentActivity
 import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.Action
