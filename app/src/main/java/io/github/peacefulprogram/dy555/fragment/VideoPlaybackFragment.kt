@@ -3,6 +3,7 @@ package io.github.peacefulprogram.dy555.fragment
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -15,6 +16,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.OptIn
 import androidx.core.graphics.drawable.toDrawable
+import androidx.fragment.app.Activity as FragmentActivity
 import androidx.leanback.app.VideoSupportFragment
 import androidx.leanback.app.VideoSupportFragmentGlueHost
 import androidx.leanback.widget.Action
@@ -357,8 +359,8 @@ class VideoPlaybackFragment(
         return false
     }
 
-    private fun openPlayListDialogAndChoose(activity: android.app.Activity) {
-        val fragmentManager = (activity as androidx.fragment.app.Activity).supportFragmentManager
+    private fun openPlayListDialogAndChoose(activity: Activity) {
+        val fragmentManager = (activity as FragmentActivity).supportFragmentManager
         val current = viewModel.episode
         val defaultSelectIndex = viewModel.playlist.indexOfFirst { it.id == current.id }
         ChooseEpisodeDialog(dataList = viewModel.playlist,
@@ -371,7 +373,7 @@ class VideoPlaybackFragment(
         }
     }
 
-    private fun openSpeedDialogAndChoose(activity: android.app.Activity) {
+    private fun openSpeedDialogAndChoose(activity: Activity) {
         ChooseSpeedDialog(
             currentSpeed = currentSpeed
         ) { speed ->
@@ -379,7 +381,7 @@ class VideoPlaybackFragment(
             exoplayer?.setPlaybackSpeed(speed)
             requireContext().showShortToast("播放倍速: ${speed}x")
         }.apply {
-            showNow((activity as androidx.fragment.app.Activity).supportFragmentManager, "")
+            showNow((activity as FragmentActivity).supportFragmentManager, "")
         }
     }
 
