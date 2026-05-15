@@ -358,7 +358,7 @@ class VideoPlaybackFragment(
     }
 
     private fun openPlayListDialogAndChoose(activity: android.app.Activity) {
-        val fragmentManager = activity.supportFragmentManager
+        val fragmentManager = (activity as androidx.fragment.app.Activity).supportFragmentManager
         val current = viewModel.episode
         val defaultSelectIndex = viewModel.playlist.indexOfFirst { it.id == current.id }
         ChooseEpisodeDialog(dataList = viewModel.playlist,
@@ -379,7 +379,7 @@ class VideoPlaybackFragment(
             exoplayer?.setPlaybackSpeed(speed)
             requireContext().showShortToast("播放倍速: ${speed}x")
         }.apply {
-            showNow(activity.supportFragmentManager, "")
+            showNow((activity as androidx.fragment.app.Activity).supportFragmentManager, "")
         }
     }
 
