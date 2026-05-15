@@ -1,16 +1,13 @@
 package io.github.peacefulprogram.dy555.fragment.playback
 
+import android.content.Context
 import androidx.leanback.widget.Action
 import io.github.peacefulprogram.dy555.R
 
 /**
  * MX Player 操作按钮
  */
-class MxPlayerAction : Action {
-    
-    constructor(id: Long) : super(id)
-    
-    constructor(id: Long, iconResId: Int) : super(id, iconResId)
+class MxPlayerAction(context: Context) : Action(context.resources.getIdentifier("mx_player_action", "id", context.packageName)) {
     
     override fun getIconResourceId(): Int {
         return R.drawable.ic_mx_player
